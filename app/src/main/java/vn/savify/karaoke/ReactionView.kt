@@ -29,7 +29,11 @@ object ReactIds {
         // 20 hieu ung moi (dot 2)
         "meteor", "sun", "moon", "whale", "dolphin", "pizza", "icecream", "popcorn",
         "gift", "sax", "trumpet", "dragon", "catlove", "skull", "ufo", "clover",
-        "firecracker", "bomb", "hundred", "muscle"
+        "firecracker", "bomb", "hundred", "muscle",
+        // 20 hieu ung moi (dot 3)
+        "volcano", "wave", "galaxy", "sparkler", "lantern", "lixi", "xmas", "tiger",
+        "panda", "frog", "eagle", "burger", "coffee", "sunflower", "ring", "medal",
+        "racecar", "plane", "pray", "mindblow"
     )
 }
 
@@ -670,6 +674,143 @@ class ReactionView(ctx: Context) : View(ctx) {
                 pop("💪", 1f, 2.6f, wobble = 10f, pulse = 0.09f)
                 burst(arrayOf("💪", "🔥", "✨", "💥"), w / 2, h / 2, 24, 36f, 90f, 450f, 1100f, 0.1f, 300f)
                 rise(arrayOf("🔥", "💪"), 12, 50f, 100f, 1.8f, 220f, 400f)
+            }
+
+            // ======================= 20 hieu ung moi (dot 3) =======================
+            "volcano" -> {
+                flash(0x44FF7043, 0f, 0.5f)
+                pop("🌋", 0.95f, 3.2f, wobble = 3f, pulse = 0.03f, cy = 0.62f)
+                for (i in 0 until 6) {
+                    burst(arrayOf("🔥", "💥", "✨", "🧡"), w / 2, h * 0.42f, 14, 34f, 84f, 400f, 1200f, 0.2f + i * 0.28f, 520f)
+                    flash(0x33FF8A65, 0.2f + i * 0.28f, 0.15f)
+                }
+                rise(arrayOf("🔥", "✨"), 16, 40f, 90f, 2.2f, 200f, 380f)
+            }
+            "wave" -> {
+                val sz = big * 0.8f
+                for (i in 0 until 3) {
+                    val y = h * (0.52f + 0.15f * i)
+                    val v = emo("🌊", -sz, y, sz, life = 2.6f, delay = i * 0.3f, env = 2)
+                    v.mt = 2.6f; v.sx = -sz; v.sy = y; v.tx = w + sz; v.ty = y; v.ease = 4; v.wobA = 4f; v.wobS = 3f
+                }
+                rise(arrayOf("💦", "💧", "🐚", "🐟"), 22, 34f, 74f, 2.4f, 140f, 290f)
+            }
+            "galaxy" -> {
+                ring(0xFFB39DDB.toInt()); ring(0xFF80DEEA.toInt(), 0.25f)
+                flash(0x33B388FF, 0f, 0.5f)
+                pop("🌌", 1.15f, 3.4f, wobble = 2f, pulse = 0.03f)
+                rain(arrayOf("⭐", "✨", "🌟", "💫", "🌠"), 34, 30f, 74f, 2.8f, 80f, 180f)
+            }
+            "sparkler" -> {
+                for (i in 0 until 10) rocket(i * 0.3f)
+            }
+            "lantern" -> {
+                flash(0x33FFB74D, 0f, 0.5f)
+                rise(arrayOf("🏮"), 18, 70f, 150f, 2.6f, 100f, 220f)
+                rise(arrayOf("✨", "🧧", "🌟"), 14, 30f, 60f, 2.6f, 120f, 240f)
+            }
+            "lixi" -> {
+                rain(arrayOf("🧧", "🧧", "💰", "💵", "✨"), 34, 56f, 120f, 2.4f, 220f, 400f)
+            }
+            "xmas" -> {
+                ring(0xFF81C784.toInt()); ring(0xFFE57373.toInt(), 0.2f)
+                pop("🎄", 1f, 3.0f, wobble = 3f, pulse = 0.03f)
+                rain(arrayOf("❄️", "🎁", "⭐", "🔔", "❄️"), 36, 34f, 84f, 2.6f, 110f, 240f)
+            }
+            "tiger" -> {
+                flash(0x66FFB74D, 0f, 0.35f)
+                ring(0xFFFF9800.toInt()); ring(0xFFFFE082.toInt(), 0.2f)
+                pop("🐯", 1f, 2.6f, wobble = 10f, pulse = 0.1f)
+                burst(arrayOf("💥", "🔥", "🐾", "✨"), w / 2, h / 2, 26, 36f, 90f, 450f, 1200f, 0.1f, 300f)
+            }
+            "panda" -> {
+                pop("🐼", 0.95f, 2.8f, wobble = 8f, pulse = 0.04f)
+                rain(arrayOf("🎋", "🐼", "🍃", "💚"), 26, 44f, 100f, 2.2f, 150f, 300f)
+            }
+            "frog" -> {
+                for (i in 0 until 5) {
+                    val sz = rnd(80f, 130f) * d
+                    val fromLeft = i % 2 == 0
+                    val speed = rnd(w * 0.16f, w * 0.24f)
+                    val p = emo("🐸", if (fromLeft) -sz else w + sz, h - sz * 0.7f, sz,
+                        vx = if (fromLeft) speed else -speed, life = (w + sz * 2f) / speed, delay = i * 0.35f, env = 2)
+                    p.hopH = rnd(1.0f, 1.8f) * sz; p.hopS = rnd(3.5f, 5f)
+                }
+                rain(arrayOf("💧", "🍃"), 16, 30f, 60f, 2.0f, 200f, 340f)
+            }
+            "eagle" -> {
+                val sz = big * 0.7f
+                val y0 = h * 0.2f; val y1 = h * 0.38f
+                val e = emo("🦅", -sz, y0, sz, life = 2.6f, env = 2)
+                e.mt = 2.6f; e.sx = -sz; e.sy = y0; e.tx = w + sz; e.ty = y1; e.ease = 4; e.wobA = 5f; e.wobS = 3f; e.flip = true
+                for (i in 0 until 26) {
+                    val u = i / 26f
+                    emo(if (i % 2 == 0) "✨" else "🍃", -sz + (w + 2 * sz) * u - sz * 0.4f, y0 + (y1 - y0) * u, rnd(28f, 60f) * d,
+                        vy = rnd(40f, 140f) * d, life = 1.1f, delay = 2.6f * u, env = 0)
+                }
+                rise(arrayOf("🍃", "✨", "☁️"), 12, 40f, 90f, 2.2f, 150f, 280f)
+            }
+            "burger" -> {
+                rain(arrayOf("🍔", "🍟", "🍔", "🌭", "🥤"), 32, 56f, 120f, 2.2f, 220f, 400f)
+            }
+            "coffee" -> {
+                pop("☕", 0.85f, 2.8f, wobble = 5f, pulse = 0.03f)
+                rise(arrayOf("💨", "☁️", "✨", "🤎"), 22, 40f, 90f, 2.4f, 110f, 230f)
+            }
+            "sunflower" -> {
+                flash(0x33FFEB3B, 0f, 0.5f)
+                rain(arrayOf("🌻", "🌻", "🌼", "🐝"), 34, 50f, 112f, 2.4f, 150f, 300f)
+            }
+            "ring" -> {
+                dropIn("💍", 0.85f, 3.0f)
+                ring(0xFFE0F7FA.toInt(), 0.85f); ring(0xFFFFD43B.toInt(), 1.0f)
+                flash(0x55FFFFFF, 0.9f, 0.3f)
+                burst(arrayOf("💎", "✨", "💖", "💍"), w / 2, h / 2, 26, 36f, 90f, 450f, 1100f, 0.9f, 320f)
+            }
+            "medal" -> {
+                dropIn("🥇", 1f)
+                ring(0xFFFFD43B.toInt(), 0.7f)
+                cannon(true, 34, 0.75f); cannon(false, 34, 0.75f)
+                rain(arrayOf("⭐", "✨", "🌟", "🏅"), 16, 36f, 80f, 2.0f, 200f, 340f)
+            }
+            "racecar" -> {
+                val sz = big * 0.5f
+                for (k in 0 until 2) {
+                    val y = h * (0.66f + 0.14f * k)
+                    val dl = k * 0.5f
+                    val mt = 1.5f
+                    val c = emo("🏎️", -sz, y, sz, life = mt, delay = dl, env = 2)
+                    c.mt = mt; c.sx = -sz; c.sy = y; c.tx = w + sz; c.ty = y; c.ease = 3; c.flip = true
+                    for (i in 0 until 22) {
+                        val u = i / 22f; val e = u * u
+                        emo(if (i % 2 == 0) "💨" else "✨", -sz + (w + 2 * sz) * e - sz * 0.5f, y + rnd(-10f, 10f) * d, rnd(28f, 56f) * d,
+                            life = 0.7f, delay = dl + mt * u, env = 0)
+                    }
+                }
+                burst(arrayOf("🏁", "✨", "🎉"), w * 0.9f, h * 0.7f, 14, 40f, 90f, 400f, 1000f, 1.5f, 300f)
+            }
+            "plane" -> {
+                val sz = big * 0.6f
+                val y0 = h * 0.42f; val y1 = h * 0.16f
+                val pl = emo("✈️", -sz, y0, sz, life = 2.8f, env = 2)
+                pl.mt = 2.8f; pl.sx = -sz; pl.sy = y0; pl.tx = w + sz; pl.ty = y1; pl.ease = 4
+                for (i in 0 until 28) {
+                    val u = i / 28f
+                    emo(if (i % 3 == 0) "✨" else "☁️", -sz + (w + 2 * sz) * u - sz * 0.5f, y0 + (y1 - y0) * u + sz * 0.1f, rnd(30f, 64f) * d,
+                        life = 1.2f, delay = 2.8f * u, env = 0)
+                }
+                rise(arrayOf("☁️", "✨"), 12, 50f, 100f, 2.4f, 120f, 240f)
+            }
+            "pray" -> {
+                ring(0xFFFFE082.toInt()); ring(0xFFFFF3B0.toInt(), 0.25f)
+                pop("🙏", 1f, 2.8f, wobble = 4f, pulse = 0.04f)
+                rise(arrayOf("✨", "💖", "🌸", "🙏"), 24, 40f, 100f, 2.2f, 150f, 300f)
+            }
+            "mindblow" -> {
+                pop("🤯", 1f, 2.6f, wobble = 10f, pulse = 0.1f)
+                flash(0xCCFFFFFF.toInt(), 0.35f, 0.35f)
+                ring(0xFFFF8A65.toInt(), 0.35f); ring(0xFFFFD43B.toInt(), 0.5f)
+                burst(arrayOf("💥", "🤯", "✨", "⭐"), w / 2, h * 0.34f, 34, 36f, 96f, 500f, 1300f, 0.35f, 320f)
             }
         }
         flush()

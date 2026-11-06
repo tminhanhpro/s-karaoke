@@ -34,7 +34,8 @@
       fav_empty: 'No favorite songs yet. Tap “♡ Favorite” on a song to keep it here (saved on this phone).',
       react_title: 'Reactions', react_hint: 'Tap to send to the TV screen', react_fail: 'Could not send. Check the connection.',
       msg_ph: 'Type a message for the TV screen…', msg_send: 'Send', msg_sent: 'Sent to the TV', msg_wait: 'Please wait a moment, then send again',
-      q1: 'Great singing! 👏', q2: 'Happy birthday! 🎂', q3: 'Cheers! 🍻', q4: 'Your turn to sing! 🎤', q5: 'Love this song ❤️'
+      q1: 'Great singing! 👏', q2: 'Happy birthday! 🎂', q3: 'Cheers! 🍻', q4: 'Your turn to sing! 🎤', q5: 'Love this song ❤️',
+      q6: 'Absolutely fire! 🔥', q7: 'Golden voice! 🌟', q8: 'Keep singing! 🎶', q9: 'Better than the original! 😍', q10: 'One more song! 🙌', q11: 'Happy New Year! 🧧', q12: 'Congrats on the wedding! 💍', q13: 'Happy housewarming! 🏠', q14: 'Happy birthday to our elder! 🎂', q15: 'Cheers to good health! 🥂', q16: 'Bottoms up! 🍻', q17: 'Perfect score! 💯', q18: 'Goosebumps! 😳', q19: 'Play something upbeat! 💃', q20: 'Next song please! ⏭️', q21: 'Turn it up! 🔊', q22: 'A bit quieter please! 🔉', q23: 'Sing along everyone! 🎤', q24: 'Mic is free, who is next? 🎙️', q25: 'Thank you all! 🙏', q26: 'Love you all! 💖', q27: 'So much fun! 🥳', q28: 'Top of the top! 👑', q29: 'Hello everyone! 👋', q30: 'Have fun everyone! 🌈', q31: 'This song is mine! 😎', q32: 'Sing it again! 🔁', q33: 'Everyone sounds great! 💫', q34: 'Time to eat! 🍽️', q35: 'See you next song! 👋'
     },
     vi: {
       search_ph: 'Tìm bài hát / dán link YouTube', tab_search: 'TÌM KIẾM', tab_queue: 'DANH SÁCH',
@@ -67,7 +68,8 @@
       fav_empty: 'Chưa có bài yêu thích. Bấm “♡ Yêu thích” ở bài hát để lưu lại đây (lưu trên điện thoại này).',
       react_title: 'Bộ sưu tập', react_hint: 'Bấm để gửi hiệu ứng lên màn hình TV', react_fail: 'Gửi không được. Kiểm tra kết nối nhé.',
       msg_ph: 'Nhắn tin lên màn hình TV…', msg_send: 'Gửi', msg_sent: 'Đã gửi lên TV', msg_wait: 'Chờ một chút rồi gửi tiếp nhé',
-      q1: 'Hát hay quá! 👏', q2: 'Chúc mừng sinh nhật! 🎂', q3: 'Cạn ly! 🍻', q4: 'Mời bạn lên hát! 🎤', q5: 'Bài này hay lắm ❤️'
+      q1: 'Hát hay quá! 👏', q2: 'Chúc mừng sinh nhật! 🎂', q3: 'Cạn ly! 🍻', q4: 'Mời bạn lên hát! 🎤', q5: 'Bài này hay lắm ❤️',
+      q6: 'Quá đỉnh! 🔥', q7: 'Giọng ca vàng! 🌟', q8: 'Hát tiếp đi! 🎶', q9: 'Hay hơn ca sĩ luôn! 😍', q10: 'Một bài nữa nha! 🙌', q11: 'Chúc mừng năm mới! 🧧', q12: 'Chúc mừng đám cưới! 💍', q13: 'Chúc mừng tân gia! 🏠', q14: 'Mừng thọ ông bà! 🎂', q15: 'Chúc sức khỏe cả nhà! 🥂', q16: 'Dzô dzô dzô! 🍻', q17: '100% luôn! 💯', q18: 'Nổi da gà luôn! 😳', q19: 'Bật bài vui vui đi! 💃', q20: 'Đổi bài đi nha! ⏭️', q21: 'Tăng âm lượng lên! 🔊', q22: 'Nhỏ tiếng lại chút! 🔉', q23: 'Hát chung nào mọi người! 🎤', q24: 'Mic đây, ai hát tiếp? 🎙️', q25: 'Cảm ơn mọi người! 🙏', q26: 'Yêu cả nhà! 💖', q27: 'Vui quá trời! 🥳', q28: 'Đỉnh của chóp! 👑', q29: 'Xin chào cả nhà! 👋', q30: 'Chúc cả nhà vui vẻ! 🌈', q31: 'Bài này của mình nha! 😎', q32: 'Hát lại lần nữa! 🔁', q33: 'Ai cũng hát hay hết! 💫', q34: 'Mời cả nhà ăn nào! 🍽️', q35: 'Hẹn bài sau nha! 👋'
     }
   };
 
@@ -484,7 +486,28 @@
     { id: 'firecracker', e: '🧨', vi: 'Pháo tết', en: 'Firecrackers' },
     { id: 'bomb', e: '💣', vi: 'Bùm!', en: 'Boom!' },
     { id: 'hundred', e: '💯', vi: 'Điểm 100', en: 'Perfect' },
-    { id: 'muscle', e: '💪', vi: 'Cực khỏe', en: 'Powerful' }
+    { id: 'muscle', e: '💪', vi: 'Cực khỏe', en: 'Powerful' },
+    // ---- 20 hieu ung moi (dot 3) ----
+    { id: 'volcano', e: '🌋', vi: 'Núi lửa', en: 'Volcano' },
+    { id: 'wave', e: '🌊', vi: 'Sóng biển', en: 'Big wave' },
+    { id: 'galaxy', e: '🌌', vi: 'Dải ngân hà', en: 'Galaxy' },
+    { id: 'sparkler', e: '🎇', vi: 'Pháo bông', en: 'Sparklers' },
+    { id: 'lantern', e: '🏮', vi: 'Đèn lồng', en: 'Lanterns' },
+    { id: 'lixi', e: '🧧', vi: 'Lì xì', en: 'Red envelopes' },
+    { id: 'xmas', e: '🎄', vi: 'Giáng sinh', en: 'Christmas' },
+    { id: 'tiger', e: '🐯', vi: 'Hổ gầm', en: 'Tiger roar' },
+    { id: 'panda', e: '🐼', vi: 'Gấu trúc', en: 'Pandas' },
+    { id: 'frog', e: '🐸', vi: 'Ếch nhảy', en: 'Hopping frogs' },
+    { id: 'eagle', e: '🦅', vi: 'Đại bàng', en: 'Eagle' },
+    { id: 'burger', e: '🍔', vi: 'Mưa burger', en: 'Burger rain' },
+    { id: 'coffee', e: '☕', vi: 'Cà phê', en: 'Coffee' },
+    { id: 'sunflower', e: '🌻', vi: 'Hướng dương', en: 'Sunflowers' },
+    { id: 'ring', e: '💍', vi: 'Nhẫn cưới', en: 'Wedding ring' },
+    { id: 'medal', e: '🥇', vi: 'Huy chương', en: 'Gold medal' },
+    { id: 'racecar', e: '🏎️', vi: 'Xe đua', en: 'Race car' },
+    { id: 'plane', e: '✈️', vi: 'Máy bay', en: 'Airplane' },
+    { id: 'pray', e: '🙏', vi: 'Cảm ơn', en: 'Thank you' },
+    { id: 'mindblow', e: '🤯', vi: 'Nổ não', en: 'Mind blown' }
   ];
   function renderReactions() {
     var g = $('r-grid'); g.textContent = '';
@@ -522,13 +545,14 @@
       toast(e && e.status ? errText(e) : t('react_fail'));
     }).then(function () { setTimeout(function () { msgBusy = false; }, 600); });
   }
+  var QUICK_COUNT = 35;
   function renderQuick() {
     var box = $('r-quick'); box.textContent = '';
-    ['q1', 'q2', 'q3', 'q4', 'q5'].forEach(function (k) {
+    for (var qi = 1; qi <= QUICK_COUNT; qi++) (function (k) {
       var b = el('button', 'qchip', t(k)); b.type = 'button';
       b.addEventListener('click', function () { sendMsg(t(k)); });
       box.appendChild(b);
-    });
+    })('q' + qi);
   }
 
   // ------------------------------------------------------------ search

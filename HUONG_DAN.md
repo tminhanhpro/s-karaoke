@@ -120,7 +120,7 @@ Cài ứng dụng *Send Files to TV* trên cả điện thoại và TV, gửi fi
    - Gõ tên bài / ca sĩ vào ô **Tìm bài hát** → bấm dấu **+** để thêm bài vào danh sách.
    - Hàng nút phía dưới: ▶/⏸ (phát/dừng), ⏭ (bài kế), ⟳ (hát lại), 🔉🔊 (âm lượng), ☰♪ (😊 **Bộ sưu tập** hiệu ứng), ✎ (dán link YouTube). Xem danh sách bài đã chọn ở tab **DANH SÁCH** phía trên.
    - Bấm **♡ Yêu thích** dưới mỗi bài để lưu vào tab **♥ YÊU THÍCH** (lưu ngay trên điện thoại này, lần sau mở lại vẫn còn).
-   - Bấm nút 😊 để mở **Bộ sưu tập**: thả tim, vỗ tay, pháo giấy, pháo hoa, lửa, hoa hồng, cụng ly... Hiệu ứng sẽ bay lên màn hình TV ngay lập tức. Bộ sưu tập hiện có **56 hiệu ứng** (thêm sao băng, mặt trời, cá voi, cá heo, rồng lửa, đĩa bay, pháo tết, bom, điểm 100...).
+   - Bấm nút 😊 để mở **Bộ sưu tập**: thả tim, vỗ tay, pháo giấy, pháo hoa, lửa, hoa hồng, cụng ly... Hiệu ứng sẽ bay lên màn hình TV ngay lập tức. Bộ sưu tập hiện có **76 hiệu ứng** (đợt mới: núi lửa, sóng biển, dải ngân hà, pháo bông, đèn lồng, lì xì, Giáng sinh, hổ gầm, gấu trúc, ếch nhảy, đại bàng, xe đua, máy bay, nhẫn cưới, huy chương...). Ngoài ra có ô **nhắn tin lên màn hình TV** kèm **35 câu mẫu** bấm là gửi (chúc mừng năm mới, đám cưới, sinh nhật, cạn ly, tăng/giảm âm lượng...).
 5. Muốn hiện mã QR khi đang phát bài: bấm nút **OK** trên remote TV → hiện bảng QR kèm dòng "Mời quét mã QR để thêm bài". Bấm **OK** lần nữa (hoặc **Back**) để đóng.
 
 **Mẹo:**
