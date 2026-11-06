@@ -69,6 +69,7 @@ class MainActivity : Activity(), IframeHost {
     private lateinit var bClose: Button
     private lateinit var hint: TextView
     private lateinit var react: ReactionView
+    private lateinit var msgView: MessageView
     private var wallShown = false
 
     private var anim: ValueAnimator? = null
@@ -206,6 +207,7 @@ class MainActivity : Activity(), IframeHost {
         c.controller.attachIframeHost(this)
         coreJobs.add(scope.launch { c.controller.ui.collect { renderUi(it) } })
         coreJobs.add(scope.launch { c.controller.reactions.collect { react.fire(it) } })
+        coreJobs.add(scope.launch { c.controller.messages.collect { msgView.show(it.first, it.second) } })
         coreJobs.add(scope.launch {
             while (true) {
                 updateQr(c)
@@ -266,6 +268,9 @@ class MainActivity : Activity(), IframeHost {
         // Hieu ung cam xuc (tha tim, phao giay...) tu remote: phu len tren video, duoi cac nut/QR
         react = ReactionView(this)
         root.addView(react, FrameLayout.LayoutParams(-1, -1))
+        // Tin nhan chu chay tu dien thoai: nam tren hieu ung, duoi cac nut/QR
+        msgView = MessageView(this)
+        root.addView(msgView, FrameLayout.LayoutParams(-1, -1))
 
         val dm = resources.displayMetrics
         val safeX = (dm.widthPixels * 0.05f).toInt()

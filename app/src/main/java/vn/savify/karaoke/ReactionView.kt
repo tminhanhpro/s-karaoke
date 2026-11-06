@@ -21,7 +21,11 @@ import kotlin.random.Random
 object ReactIds {
     val ALL: Set<String> = setOf(
         "heart", "clap", "party", "fire", "star", "laugh", "love", "mic",
-        "rose", "firework", "like", "beer", "crown", "dance", "balloon", "cry"
+        "rose", "firework", "like", "beer", "crown", "dance", "balloon", "cry",
+        // 20 hieu ung moi
+        "rainbow", "unicorn", "rocket", "lightning", "snow", "sakura", "butterfly", "diamond",
+        "trophy", "champagne", "cheers", "guitar", "drum", "cool", "partyface", "wow",
+        "kiss", "ghost", "cake", "money"
     )
 }
 
@@ -32,7 +36,7 @@ object ReactIds {
 class ReactionView(ctx: Context) : View(ctx) {
 
     private class Part(
-        var kind: Int,            // 0 emoji, 1 giay confetti, 3 tia lua, 5 vong song
+        var kind: Int,            // 0 emoji, 1 giay confetti, 3 tia lua, 5 vong song, 6 chop sang toan man hinh
         var emoji: String? = null,
         var x: Float = 0f, var y: Float = 0f,
         var vx: Float = 0f, var vy: Float = 0f,
@@ -128,6 +132,7 @@ class ReactionView(ctx: Context) : View(ctx) {
             val c3 = c1 + 1f
             1f + c3 * (u - 1f).pow(3) + c1 * (u - 1f).pow(2)
         }
+        3 -> u * u // tang toc dan (ten lua)
         else -> 1f - (1f - u) * (1f - u)
     }
 
@@ -182,6 +187,31 @@ class ReactionView(ctx: Context) : View(ctx) {
     private fun ring(color: Int, delay: Float = 0f) {
         val p = Part(5, x = vw() / 2f, y = vh() / 2f, size = big() * 0.35f, size2 = big() * 1.25f, life = 0.9f, delay = delay, color = color)
         add(p)
+    }
+
+    /** Chop sang toan man hinh (set, phao sang). */
+    private fun flash(color: Int, delay: Float = 0f, life: Float = 0.45f) {
+        add(Part(6, life = life, delay = delay, color = color, size = rnd(0f, 6.28f)))
+    }
+
+    /** Hai vat bay vao tu hai ben, cham nhau o giua roi bung (cung ly / nang ly). */
+    private fun clink(e: String) {
+        val w = vw(); val h = vh()
+        val sz = big() * 0.7f
+        val cy = h * 0.5f
+        val gap = sz * 0.42f
+        val l = emo(e, -sz, cy, sz, life = 2.6f, env = 0)
+        l.mt = 0.55f; l.sx = -sz; l.sy = cy; l.tx = w / 2 - gap; l.ty = cy; l.ease = 2; l.rot = 14f; l.end = 2
+        val r = emo(e, w + sz, cy, sz, life = 2.6f, env = 0)
+        r.mt = 0.55f; r.sx = w + sz; r.sy = cy; r.tx = w / 2 + gap; r.ty = cy; r.ease = 2; r.rot = -14f; r.flip = true
+    }
+
+    /** Vat nang roi tu tren xuong, nay (bounce) o giua man hinh. */
+    private fun dropIn(e: String, scale: Float, life: Float = 3.0f) {
+        val w = vw(); val h = vh()
+        val sz = big() * scale
+        val c = emo(e, w / 2, -sz, sz, life = life, env = 0)
+        c.mt = 0.9f; c.sx = w / 2; c.sy = -sz; c.tx = w / 2; c.ty = h * 0.5f; c.ease = 1
     }
 
     /** No ban ra xung quanh mot diem. */
@@ -361,6 +391,125 @@ class ReactionView(ctx: Context) : View(ctx) {
                 pop("😭", 0.95f, 2.8f, wobble = 5f, pulse = 0.03f)
                 rain(arrayOf("💧"), 28, 34f, 62f, 2.0f, 260f, 460f)
             }
+
+            // ======================= 20 hieu ung moi =======================
+            "rainbow" -> {
+                ring(0xFFFF8A80.toInt()); ring(0xFFFFEB3B.toInt(), 0.15f); ring(0xFF80D8FF.toInt(), 0.3f)
+                pop("🌈", 1.15f, 3.0f, wobble = 3f, pulse = 0.03f)
+                rise(arrayOf("✨", "⭐", "🌟", "💖"), 24, 40f, 90f, 2.0f, 180f, 340f)
+            }
+            "unicorn" -> {
+                ring(0xFFE1BEE7.toInt())
+                pop("🦄", 1f, 3.0f, wobble = 8f, pulse = 0.04f)
+                burst(arrayOf("✨", "💖", "🌈", "⭐"), w / 2, h / 2, 28, 36f, 90f, 400f, 1000f, 0.1f, 300f)
+                rise(arrayOf("✨", "💜", "🌈"), 18, 40f, 90f, 2.2f, 160f, 300f)
+            }
+            "rocket" -> {
+                // ten lua bay cheo tu goc duoi trai len, de lai vet lua, roi no phao hoa
+                val sz = big * 0.55f
+                val sx = w * 0.08f; val sy = h + sz * 0.6f
+                val tx = w * 0.55f; val ty = h * 0.3f
+                val mt = 1.0f
+                val rk = emo("🚀", sx, sy, sz, life = mt, env = 2)
+                rk.mt = mt; rk.sx = sx; rk.sy = sy; rk.tx = tx; rk.ty = ty; rk.ease = 3; rk.end = 1
+                rk.rot = (Math.toDegrees(Math.atan2((ty - sy).toDouble(), (tx - sx).toDouble())) + 45.0).toFloat()
+                for (i in 0 until 26) {
+                    val u = i / 26f
+                    val e = u * u
+                    emo(if (i % 3 == 0) "✨" else "🔥", sx + (tx - sx) * e, sy + (ty - sy) * e, rnd(30f, 62f) * d,
+                        life = 0.7f, delay = mt * u, env = 0)
+                }
+                flash(0x66FFD54F, mt, 0.3f)
+                burst(arrayOf("⭐", "✨", "🌟"), tx, ty, 26, 36f, 84f, 350f, 950f, mt, 260f)
+                for (i in 0 until 3) rocket(mt + 0.15f + i * 0.35f)
+            }
+            "lightning" -> {
+                flash(0xBBFFFFFF.toInt(), 0f, 0.5f); flash(0x99FFF59D.toInt(), 0.55f, 0.4f)
+                ring(0xFFFFF176.toInt())
+                pop("⚡", 1.1f, 2.4f, wobble = 4f, pulse = 0.09f)
+                burst(arrayOf("⚡", "✨", "💥"), w / 2, h / 2, 22, 40f, 100f, 500f, 1200f, 0.05f, 300f)
+                rain(arrayOf("⚡"), 10, 50f, 100f, 1.2f, 500f, 800f)
+            }
+            "snow" -> {
+                rain(arrayOf("❄️", "❄️", "❄️", "✨", "⛄"), 46, 30f, 84f, 3.0f, 90f, 190f)
+            }
+            "sakura" -> {
+                rain(arrayOf("🌸", "🌸", "🌸", "💮"), 48, 26f, 74f, 3.0f, 100f, 220f)
+            }
+            "butterfly" -> {
+                rise(arrayOf("🦋"), 22, 56f, 120f, 2.6f, 90f, 210f)
+                rise(arrayOf("🌸", "✨"), 14, 26f, 50f, 2.4f, 120f, 240f)
+            }
+            "diamond" -> {
+                ring(0xFF80DEEA.toInt()); ring(0xFFE0F7FA.toInt(), 0.2f)
+                pop("💎", 1f, 2.8f, wobble = 7f, pulse = 0.05f)
+                burst(arrayOf("💎", "✨", "💠"), w / 2, h / 2, 26, 36f, 90f, 400f, 1050f, 0.1f, 320f)
+                rain(arrayOf("✨", "💎"), 16, 30f, 70f, 2.0f, 200f, 340f)
+            }
+            "trophy" -> {
+                dropIn("🏆", 1f)
+                ring(0xFFFFD43B.toInt(), 0.7f)
+                cannon(true, 36, 0.75f); cannon(false, 36, 0.75f)
+                rain(arrayOf("⭐", "✨", "🌟"), 14, 36f, 80f, 2.0f, 200f, 340f)
+            }
+            "champagne" -> {
+                pop("🍾", 0.9f, 2.6f, wobble = 14f)
+                burst(arrayOf("💦", "✨", "🥂", "⭐"), w / 2, h * 0.34f, 30, 34f, 80f, 500f, 1300f, 0.25f, 420f)
+                cannon(true, 30, 0.3f); cannon(false, 30, 0.3f)
+                flash(0x55FFFFFF, 0.25f, 0.25f)
+            }
+            "cheers" -> {
+                clink("🥂")
+                rise(arrayOf("✨", "🥂", "⭐"), 14, 36f, 80f, 2.0f, 160f, 300f)
+            }
+            "guitar" -> {
+                pop("🎸", 0.9f, 2.8f, wobble = 16f, pulse = 0.03f)
+                repeat(30) {
+                    val a = Math.toRadians(rnd(190f, 350f).toDouble()).toFloat()
+                    val v = rnd(450f, 1100f) * d
+                    emo(listOf("🎵", "🎶", "🎼", "✨").random(), w / 2, h * 0.5f, rnd(44f, 96f) * d,
+                        vx = cos(a) * v, vy = sin(a) * v, g = 260f * d, drag = 1.2f, life = rnd(1.8f, 2.8f),
+                        delay = rnd(0.1f, 1.3f), env = 3, rotSpeed = rnd(-110f, 110f))
+                }
+            }
+            "drum" -> {
+                pop("🥁", 0.95f, 2.8f, wobble = 3f, pulse = 0.14f)
+                for (i in 0 until 5) ring(confettiColors[i % confettiColors.size], i * 0.28f)
+                burst(arrayOf("🎵", "💥", "✨"), w / 2, h / 2, 20, 36f, 84f, 400f, 1000f, 0.2f, 320f)
+            }
+            "cool" -> {
+                dropIn("😎", 0.95f, 2.8f)
+                ring(0xFF80D8FF.toInt(), 0.75f)
+                burst(arrayOf("💯", "✨", "😎", "🔥"), w / 2, h / 2, 22, 36f, 86f, 450f, 1100f, 0.8f, 320f)
+            }
+            "partyface" -> {
+                pop("🥳", 1f, 2.8f, wobble = 8f, pulse = 0.05f)
+                cannon(true, 50, 0.1f); cannon(false, 50, 0.1f)
+                rise(arrayOf("🎈", "🎉", "🎊"), 14, 60f, 120f, 2.0f, 180f, 340f)
+            }
+            "wow" -> {
+                ring(0xFFFFF3B0.toInt()); ring(0xFFFFCC80.toInt(), 0.2f)
+                pop("🤩", 1f, 2.6f, wobble = 6f, pulse = 0.09f)
+                burst(arrayOf("⭐", "🌟", "✨", "💫"), w / 2, h / 2, 36, 34f, 96f, 450f, 1150f, 0.05f, 300f)
+            }
+            "kiss" -> {
+                pop("😘", 0.95f, 2.6f, wobble = 7f, pulse = 0.04f)
+                rise(arrayOf("💋", "💕", "❤️", "😘", "💖"), 26, 50f, 120f, 2.0f, 200f, 380f)
+            }
+            "ghost" -> {
+                pop("👻", 0.95f, 2.8f, wobble = 12f, pulse = 0.03f)
+                rise(arrayOf("👻", "🎃", "🦇"), 14, 56f, 120f, 2.4f, 120f, 240f)
+                flash(0x33B388FF, 0f, 0.5f)
+            }
+            "cake" -> {
+                pop("🎂", 1f, 3.0f, wobble = 5f, pulse = 0.04f)
+                cannon(true, 36, 0.15f); cannon(false, 36, 0.15f)
+                rise(arrayOf("🎈", "🎁", "🎉"), 14, 56f, 110f, 2.2f, 170f, 320f)
+            }
+            "money" -> {
+                pop("🤑", 0.85f, 2.4f, wobble = 7f, pulse = 0.05f)
+                rain(arrayOf("💰", "💵", "💎", "💵"), 34, 50f, 110f, 2.2f, 300f, 540f)
+            }
         }
         flush()
     }
@@ -483,6 +632,15 @@ class ReactionView(ctx: Context) : View(ctx) {
                 c.drawLine(p.px, p.py, p.x, p.y, paint)
                 paint.style = Paint.Style.FILL
                 c.drawCircle(p.x, p.y, p.size * 0.7f, paint)
+            }
+            6 -> {
+                // chop sang: nhap nhay nhanh, mo dan
+                val flick = 0.55f + 0.45f * sin(a * 38f + p.size)
+                val base = ((p.color ushr 24) and 0xFF) / 255f
+                paint.style = Paint.Style.FILL
+                paint.color = p.color or (0xFF shl 24)
+                paint.alpha = (base * flick * (1f - u) * 255f).toInt().coerceIn(0, 255)
+                c.drawRect(0f, 0f, vw(), vh(), paint)
             }
             5 -> {
                 val r = p.size + (p.size2 - p.size) * ease(0, u)

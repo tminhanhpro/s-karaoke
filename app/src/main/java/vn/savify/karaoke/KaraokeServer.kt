@@ -25,6 +25,7 @@ class KaraokeServer(
     private val failures = ConcurrentHashMap<String, ArrayList<Long>>()
     private val idem = ConcurrentHashMap<String, Pair<Long, String>>()
     private val reactTimes = java.util.ArrayDeque<Long>()
+    @Volatile private var lastMsgAt = 0L
 
     private val OK = Response.Status.OK
 
@@ -313,6 +314,19 @@ class KaraokeServer(
                     if (reactTimes.size >= 12) pass = false else reactTimes.addLast(now)
                 }
                 if (pass) ctl.react(id)
+                return json(JSONObject().put("ok", true).put("dropped", !pass))
+            }
+
+            method == Method.POST && p0 == "message" -> {
+                val b = body(s)
+                // bo ky tu dieu khien, gop khoang trang, toi da 80 ky tu
+                val text = b.optString("text", "").replace(Regex("[\\p{Cntrl}\\u200B-\\u200F\\u202A-\\u202E]"), " ")
+                    .replace(Regex("\\s+"), " ").trim().take(80)
+                if (text.isEmpty()) throw ApiError(400, "EMPTY_MESSAGE", "Empty message")
+                val now = System.currentTimeMillis()
+                // gioi han: toi da 1 tin / 1,5 giay de khong bi spam
+                val pass = synchronized(this) { if (now - lastMsgAt < 1500) false else { lastMsgAt = now; true } }
+                if (pass) ctl.message((dev ?: "").trim().take(24), text)
                 return json(JSONObject().put("ok", true).put("dropped", !pass))
             }
 

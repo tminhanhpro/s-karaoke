@@ -68,6 +68,10 @@ class Controller(
     val reactions = MutableSharedFlow<String>(extraBufferCapacity = 32, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     fun react(id: String) { reactions.tryEmit(id) }
 
+    /** Tin nhan chu chay tu remote -> man hinh TV (nguoi gui, noi dung). */
+    val messages = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    fun message(sender: String, text: String) { messages.tryEmit(Pair(sender, text)) }
+
     val player: ExoPlayer = ExoPlayer.Builder(app)
         .setLoadControl(
             DefaultLoadControl.Builder()

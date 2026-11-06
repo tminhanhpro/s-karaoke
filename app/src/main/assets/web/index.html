@@ -110,6 +110,11 @@
 
 <div id="sheet-react" class="sheet" hidden>
   <h3 id="r-title"></h3>
+  <form id="r-msgform" class="msgbox" autocomplete="off">
+    <input id="r-msg" maxlength="80" enterkeyhint="send" autocomplete="off" autocapitalize="sentences">
+    <button id="r-send" type="submit" class="msgsend"></button>
+  </form>
+  <div id="r-quick" class="quick"></div>
   <div id="r-hint" class="r-hint"></div>
   <div id="r-grid"></div>
   <button id="r-close" class="plain"></button>

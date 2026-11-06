@@ -166,3 +166,29 @@ input[type=text],input:not([type]),select,#a-url,#a-name,#d-dev{min-height:44px;
 .rbtn.sent{animation:rpop .4s ease-out}
 @keyframes rpop{0%{transform:scale(1)}35%{transform:scale(1.28) rotate(-4deg)}70%{transform:scale(.96) rotate(3deg)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion: reduce){.rbtn.sent{animation:none}}
+
+/* ===== Cum 3 nut gon: +, ba cham, trai tim - xep doc, sat le phai ===== */
+.row-item{align-items:center}
+.acts{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;margin-left:auto;align-self:center}
+.acts .act{min-width:46px;width:46px;min-height:46px;height:46px}
+.acts .act.plus{font-size:34px;padding-bottom:3px}
+.acts .act.more{font-size:28px;border-width:2px;padding-bottom:2px}
+.acts .favbtn{margin:0;display:flex;align-items:center;justify-content:center;width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;font-size:0;flex:0 0 auto}
+.favbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+.favbtn.on svg{fill:currentColor}
+/* tieu de bai hat duoc nhieu cho hon */
+.row-item{gap:8px;padding:8px 6px 8px 8px}
+.now-card .acts{align-self:flex-start}
+
+/* ===== Gui tin nhan len man hinh TV (dau popup bo suu tap) ===== */
+#sheet-react{max-height:94dvh}
+.msgbox{display:flex;gap:8px;align-items:stretch}
+.msgbox input{flex:1;min-width:0;min-height:52px;padding:0 14px;border:2px solid var(--accent);border-radius:14px;background:var(--bg);color:var(--fg);font-size:18px}
+.msgsend{flex:0 0 auto;min-width:96px;min-height:52px;padding:0 16px;border-radius:14px;background:var(--accent);color:#fff;font-weight:800;font-size:18px;touch-action:manipulation}
+@media (prefers-color-scheme: dark){.msgsend{color:#03283d}}
+.msgsend:active{transform:scale(.95)}
+.quick{display:flex;gap:8px;overflow-x:auto;padding:0 0 4px;margin:-4px 0 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.qchip{flex:0 0 auto;white-space:nowrap;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--accent);background:var(--bg);color:var(--fg);font-size:15px;font-weight:700;touch-action:manipulation}
+.qchip:active{background:var(--accent);color:#fff}
+#r-grid{max-height:40vh}

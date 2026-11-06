@@ -32,7 +32,9 @@
       tab_favs: '♥ FAVORITES', fav: 'Favorite', fav_on: 'Saved', fav_add: 'Add to favorites', unfav: 'Remove from favorites',
       fav_added: 'Saved to favorites', fav_removed: 'Removed from favorites', undo: 'Undo',
       fav_empty: 'No favorite songs yet. Tap “♡ Favorite” on a song to keep it here (saved on this phone).',
-      react_title: 'Reactions', react_hint: 'Tap to send to the TV screen', react_fail: 'Could not send. Check the connection.'
+      react_title: 'Reactions', react_hint: 'Tap to send to the TV screen', react_fail: 'Could not send. Check the connection.',
+      msg_ph: 'Type a message for the TV screen…', msg_send: 'Send', msg_sent: 'Sent to the TV', msg_wait: 'Please wait a moment, then send again',
+      q1: 'Great singing! 👏', q2: 'Happy birthday! 🎂', q3: 'Cheers! 🍻', q4: 'Your turn to sing! 🎤', q5: 'Love this song ❤️'
     },
     vi: {
       search_ph: 'Tìm bài hát / dán link YouTube', tab_search: 'TÌM KIẾM', tab_queue: 'DANH SÁCH',
@@ -63,7 +65,9 @@
       tab_favs: '♥ YÊU THÍCH', fav: 'Yêu thích', fav_on: 'Đã thích', fav_add: 'Thêm vào yêu thích', unfav: 'Bỏ yêu thích',
       fav_added: 'Đã thêm vào yêu thích', fav_removed: 'Đã bỏ khỏi yêu thích', undo: 'Hoàn tác',
       fav_empty: 'Chưa có bài yêu thích. Bấm “♡ Yêu thích” ở bài hát để lưu lại đây (lưu trên điện thoại này).',
-      react_title: 'Bộ sưu tập', react_hint: 'Bấm để gửi hiệu ứng lên màn hình TV', react_fail: 'Gửi không được. Kiểm tra kết nối nhé.'
+      react_title: 'Bộ sưu tập', react_hint: 'Bấm để gửi hiệu ứng lên màn hình TV', react_fail: 'Gửi không được. Kiểm tra kết nối nhé.',
+      msg_ph: 'Nhắn tin lên màn hình TV…', msg_send: 'Gửi', msg_sent: 'Đã gửi lên TV', msg_wait: 'Chờ một chút rồi gửi tiếp nhé',
+      q1: 'Hát hay quá! 👏', q2: 'Chúc mừng sinh nhật! 🎂', q3: 'Cạn ly! 🍻', q4: 'Mời bạn lên hát! 🎤', q5: 'Bài này hay lắm ❤️'
     }
   };
 
@@ -98,6 +102,7 @@
     vup: svg('<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 9.5a4 4 0 0 1 0 5M19 6.5a8 8 0 0 1 0 11"/>'),
     queue: svg('<path d="M4 6h10M4 11h10M4 16h6"/><path d="M18 16V6.5l3-.8"/><circle cx="16" cy="16.5" r="2"/>'),
     react: svg('<circle cx="12" cy="12" r="9"/><path d="M8.3 14c.9 1.7 2.2 2.5 3.7 2.5s2.8-.8 3.7-2.5"/><path d="M9 9.6v.6M15 9.6v.6" stroke-width="2.6"/>'),
+    heart: svg('<path d="M12 20.8s-7.6-4.7-9.3-9.5C1.5 7.9 3.6 4.4 7.2 4.4c1.9 0 3.5 1 4.8 2.9 1.3-1.9 2.9-2.9 4.8-2.9 3.6 0 5.7 3.5 4.5 6.9-1.7 4.8-9.3 9.5-9.3 9.5z"/>'),
     link: svg('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>')
   };
   function setIcon(id, name) {
@@ -252,8 +257,8 @@
         col.appendChild(el('div', 'sub', t('now_playing')));
         col.appendChild(el('div', 'title', np.title));
         col.appendChild(el('div', 'sub', np.channel + (np.source === 'SEED' ? ' · ' + (lang === 'vi' ? 'gợi ý' : 'suggested') : '')));
-        col.appendChild(favBtn(np));
         r.appendChild(col);
+        r.appendChild(actsBox([favBtn(np)]));
         card.appendChild(r);
         var bar = el('div', 'bar'); var fill = el('div', 'fill'); fill.id = 'now-fill'; bar.appendChild(fill);
         card.appendChild(bar);
@@ -281,14 +286,20 @@
       col.appendChild(el('div', 'title', it.title));
       col.appendChild(el('div', 'sub', it.channel));
       if (it.addedBy) col.appendChild(el('div', 'sub', '👤 ' + it.addedBy));
-      col.appendChild(favBtn(it));
       li.appendChild(col);
       var more = el('button', 'act more', '⋮'); more.setAttribute('aria-label', 'Menu');
       more.addEventListener('click', function () { openQueueMenu(it, idx); });
-      li.appendChild(more);
+      li.appendChild(actsBox([more, favBtn(it)]));
       ul.appendChild(li);
     });
     $('queue-empty').textContent = S.queue.length ? '' : t('nothing');
+  }
+
+  // cum nut hanh dong sat le phai (xep doc): +, ba cham, trai tim
+  function actsBox(btns) {
+    var box = el('div', 'acts');
+    btns.forEach(function (b) { box.appendChild(b); });
+    return box;
   }
 
   function thumbBox(it) {
@@ -387,7 +398,9 @@
   function paintFav(b) {
     var on = isFav(b.dataset.vid);
     b.classList.toggle('on', on);
-    b.textContent = on ? ('♥ ' + t('fav_on')) : ('♡ ' + t('fav'));
+    if (!b.firstChild) b.innerHTML = IC.heart;
+    var lbl = on ? t('unfav') : t('fav_add');
+    b.setAttribute('aria-label', lbl); b.title = lbl;
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   }
   function favBtn(it) {
@@ -429,7 +442,28 @@
     { id: 'crown', e: '👑', vi: 'Vua hát', en: 'Top singer' },
     { id: 'dance', e: '💃', vi: 'Nhảy đi', en: 'Dance' },
     { id: 'balloon', e: '🎈', vi: 'Bóng bay', en: 'Balloons' },
-    { id: 'cry', e: '😭', vi: 'Cảm động', en: 'Touched' }
+    { id: 'cry', e: '😭', vi: 'Cảm động', en: 'Touched' },
+    // ---- 20 hieu ung moi ----
+    { id: 'rainbow', e: '🌈', vi: 'Cầu vồng', en: 'Rainbow' },
+    { id: 'unicorn', e: '🦄', vi: 'Kỳ lân', en: 'Unicorn' },
+    { id: 'rocket', e: '🚀', vi: 'Tên lửa', en: 'Rocket' },
+    { id: 'lightning', e: '⚡', vi: 'Sấm sét', en: 'Thunder' },
+    { id: 'snow', e: '❄️', vi: 'Tuyết rơi', en: 'Snowfall' },
+    { id: 'sakura', e: '🌸', vi: 'Anh đào', en: 'Sakura' },
+    { id: 'butterfly', e: '🦋', vi: 'Bướm bay', en: 'Butterflies' },
+    { id: 'diamond', e: '💎', vi: 'Kim cương', en: 'Diamond' },
+    { id: 'trophy', e: '🏆', vi: 'Cúp vàng', en: 'Trophy' },
+    { id: 'champagne', e: '🍾', vi: 'Khui rượu', en: 'Champagne' },
+    { id: 'cheers', e: '🥂', vi: 'Chúc mừng', en: 'Congrats' },
+    { id: 'guitar', e: '🎸', vi: 'Guitar', en: 'Guitar' },
+    { id: 'drum', e: '🥁', vi: 'Trống', en: 'Drums' },
+    { id: 'cool', e: '😎', vi: 'Ngầu lòi', en: 'Too cool' },
+    { id: 'partyface', e: '🥳', vi: 'Quẩy lên', en: 'Party' },
+    { id: 'wow', e: '🤩', vi: 'Choáng!', en: 'Wow!' },
+    { id: 'kiss', e: '😘', vi: 'Hôn gió', en: 'Kisses' },
+    { id: 'ghost', e: '👻', vi: 'Hú hồn', en: 'Boo!' },
+    { id: 'cake', e: '🎂', vi: 'Sinh nhật', en: 'Birthday' },
+    { id: 'money', e: '🤑', vi: 'Phát tài', en: 'Jackpot' }
   ];
   function renderReactions() {
     var g = $('r-grid'); g.textContent = '';
@@ -449,6 +483,30 @@
     api('POST', '/api/react', { id: id }).catch(function (e) {
       var now = Date.now();
       if (now - reactErrAt > 3000) { reactErrAt = now; toast(e && e.status ? errText(e) : t('react_fail')); }
+    });
+  }
+
+  // ------------------------------------------------------------ tin nhan chay chu tren man hinh TV
+  var msgBusy = false;
+  function sendMsg(text) {
+    text = (text || '').replace(/\s+/g, ' ').trim();
+    if (!text || msgBusy) return;
+    msgBusy = true;
+    api('POST', '/api/message', { text: text }).then(function (r) {
+      if (r && r.dropped) { toast(t('msg_wait')); return; }
+      $('r-msg').value = '';
+      pill('✓ ' + t('msg_sent'));
+      try { if (navigator.vibrate) navigator.vibrate(18); } catch (e) {}
+    }).catch(function (e) {
+      toast(e && e.status ? errText(e) : t('react_fail'));
+    }).then(function () { setTimeout(function () { msgBusy = false; }, 600); });
+  }
+  function renderQuick() {
+    var box = $('r-quick'); box.textContent = '';
+    ['q1', 'q2', 'q3', 'q4', 'q5'].forEach(function (k) {
+      var b = el('button', 'qchip', t(k)); b.type = 'button';
+      b.addEventListener('click', function () { sendMsg(t(k)); });
+      box.appendChild(b);
     });
   }
 
@@ -535,13 +593,14 @@
     col.appendChild(el('div', 'title', it.title));
     col.appendChild(el('div', 'sub', it.channel));
     var badge = el('div', 'badge', '✓ ' + t('in_queue')); badge.hidden = true; col.appendChild(badge);
-    if (!inFavs) col.appendChild(favBtn(it));
     li.appendChild(col);
     var plus = el('button', 'act plus', '+'); plus.setAttribute('aria-label', t('add'));
     var more = el('button', 'act more', '⋮'); more.setAttribute('aria-label', 'Menu');
-    li.appendChild(plus); li.appendChild(more);
+    li.appendChild(actsBox([plus, more, favBtn(it)]));
     li.addEventListener('click', function (ev) {
-      if (ev.target === more) return;
+      var tg = ev.target;
+      // bam vao nut ba cham / trai tim / khoang trong cua cum nut thi khong tu dong them bai
+      if (tg && tg.closest && tg.closest('.acts') && !tg.closest('.plus')) return;
       addSong(it, 'end', false);
     });
     more.addEventListener('click', function (ev) { ev.stopPropagation(); openResultMenu(it); });
@@ -551,7 +610,7 @@
   }
   function appendResult(it) { $('results').appendChild(songRow(it, false)); }
   function markBadge(li, queued) {
-    var badge = li.querySelector('.badge'); var plus = li.querySelector('.act');
+    var badge = li.querySelector('.badge'); var plus = li.querySelector('.act.plus');
     badge.hidden = !queued; plus.textContent = queued ? '✓' : '+';
   }
   function refreshResultBadges() {
@@ -592,6 +651,7 @@
   function closeAll() {
     ['drawer', 'sheet-yt', 'sheet-add', 'sheet-menu', 'sheet-react', 'donate-big'].forEach(function (i) { $(i).hidden = true; });
     $('scrim').hidden = true;
+    try { $('r-msg').blur(); } catch (e) {}
   }
 
   function openMenu(title, entries) {
@@ -710,6 +770,9 @@
     $('r-title').textContent = t('react_title');
     $('r-hint').textContent = t('react_hint');
     $('r-close').textContent = t('close');
+    $('r-msg').placeholder = t('msg_ph');
+    $('r-send').textContent = t('msg_send');
+    renderQuick();
     renderReactions();
     syncFavs();
     renderFavs();
@@ -809,6 +872,7 @@
     holdRepeat($('b-vup'), 5);
     $('b-react').addEventListener('click', function () { openSheet('sheet-react'); });
     $('r-close').addEventListener('click', closeAll);
+    $('r-msgform').addEventListener('submit', function (e) { e.preventDefault(); sendMsg($('r-msg').value); });
     $('b-add').addEventListener('click', function () { $('a-url').value = ''; $('a-name').value = ''; openSheet('sheet-add'); setTimeout(function () { $('a-url').focus(); }, 50); });
 
     $('a-ok').addEventListener('click', function () {
