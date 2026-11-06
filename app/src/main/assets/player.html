@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}
+#p{position:absolute;top:0;left:0;width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="p"></div>
+<script>
+var yt = null, ready = false, pend = null, key = '', vol = 100, timer = null;
+
+function onYouTubeIframeAPIReady() {
+  yt = new YT.Player('p', {
+    width: '100%', height: '100%',
+    playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1,
+                  iv_load_policy: 3, disablekb: 1, fs: 0, origin: 'https://www.youtube.com' },
+    events: {
+      onReady: function () {
+        ready = true;
+        if (pend) { var a = pend; pend = null; kLoad(a[0], a[1], a[2]); }
+      },
+      onStateChange: function (e) {
+        if (e.data === 0) KBridge.ended(key);
+        if (e.data === 1) KBridge.state(key, 'playing');
+      },
+      onError: function (e) { KBridge.error(key, e.data); }
+    }
+  });
+}
+
+function kLoad(id, k, s) {
+  key = k;
+  if (!ready) { pend = [id, k, s]; return; }
+  yt.loadVideoById({ videoId: id, startSeconds: s || 0 });
+  yt.setVolume(vol);
+  if (!timer) {
+    timer = setInterval(function () {
+      try { KBridge.pos(key, yt.getCurrentTime() * 1000, yt.getDuration() * 1000); } catch (e) {}
+    }, 1000);
+  }
+}
+function kPause() { if (ready) yt.pauseVideo(); }
+function kPlay() { if (ready) yt.playVideo(); }
+function kSeek(sec) { if (ready) yt.seekTo(sec, true); }
+function kVol(v) { vol = v; if (ready) yt.setVolume(v); }
+function kStop() { key = ''; pend = null; if (ready) yt.stopVideo(); }
+</script>
+<script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>

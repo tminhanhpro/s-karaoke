@@ -1,0 +1,9 @@
+{
+  "name": "Savify Karaoke Remote",
+  "short_name": "Karaoke",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121216",
+  "theme_color": "#0288d1",
+  "icons": [{ "src": "/static/icon.png", "sizes": "512x512", "type": "image/png" }]
+}

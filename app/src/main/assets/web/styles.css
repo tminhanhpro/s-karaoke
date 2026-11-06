@@ -1,0 +1,168 @@
+:root{
+  --bar:#0288d1; --bar-fg:#fff; --bg:#eef6fc; --card:#fff; --fg:#14212b; --muted:#60758a;
+  --line:#d3e4f2; --accent:#0288d1; --ok:#0277bd; --ph:#d4e6f3;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0d1b26; --card:#14283a; --fg:#eaf4fb; --muted:#8fa9bd; --line:#22425c; --ph:#1e3a52; --bar:#01579b; --accent:#4fc3f7; --ok:#4fc3f7; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bar)}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{display:flex;flex-direction:column;height:100dvh}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffb300;outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.banner{background:#b3e5fc;color:#01344f;padding:8px 12px;text-align:center;font-weight:600;font-size:14px}
+
+.appbar{display:flex;gap:8px;align-items:center;padding:8px 10px 10px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--bar);color:var(--bar-fg)}
+.icon-btn{min-width:44px;min-height:44px;font-size:22px;color:#fff;border-radius:8px}
+/* nut menu 3 gach: to, de thay, co hieu ung nhap nhay thu hut su chu y */
+.menu-btn{flex:0 0 auto;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.9);color:#fff;display:flex;align-items:center;justify-content:center;touch-action:manipulation;animation:menuring 1.8s ease-out infinite}
+.menu-btn svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;pointer-events:none;animation:menubob 1.8s ease-in-out infinite}
+.menu-btn:active{background:rgba(255,255,255,.5)}
+@keyframes menuring{0%{box-shadow:0 0 0 0 rgba(255,235,59,.85)}70%{box-shadow:0 0 0 14px rgba(255,235,59,0)}100%{box-shadow:0 0 0 0 rgba(255,235,59,0)}}
+@keyframes menubob{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.search{flex:1;position:relative}
+.search input{width:100%;min-height:54px;border:0;border-radius:27px;padding:0 92px 0 18px;font-size:22px;font-weight:500;background:#fff;color:#111}
+.search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none;display:none}
+.search input::placeholder{font-size:18px;font-weight:400;color:#7a8a98}
+.clear{position:absolute;right:50px;top:0;min-width:40px;min-height:54px;font-size:18px;color:#555}
+.mic{position:absolute;right:6px;top:7px;width:40px;height:40px;border-radius:20px;color:#0288d1;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+.mic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.mic:active{background:#e1f1fb}
+.mic.on{background:#e53935;color:#fff;animation:micpulse 1s ease-in-out infinite}
+@keyframes micpulse{50%{box-shadow:0 0 0 8px rgba(229,57,53,.25)}}
+.chip{min-width:44px;min-height:36px;border-radius:18px;background:rgba(255,255,255,.22);color:#fff;font-weight:700;padding:0 10px}
+
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--line)}
+.tab{flex:1;min-height:48px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.bump{animation:bump .4s}
+@keyframes bump{50%{transform:scale(1.15)}}
+
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.view{padding:6px 10px 12px}
+.list{list-style:none;margin:0;padding:0}
+.status{padding:16px;text-align:center;color:var(--muted)}
+.recent{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+.recent button{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px 14px;min-height:40px}
+
+.row-item{display:flex;gap:10px;align-items:center;background:var(--card);border-radius:8px;margin:8px 0;padding:6px;border:1px solid var(--line)}
+.thumb{position:relative;flex:0 0 38%;aspect-ratio:16/9;border-radius:4px;overflow:hidden;background:var(--ph)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .noimg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--muted)}
+.dur{position:absolute;right:4px;bottom:4px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;padding:1px 5px;border-radius:3px}
+.info-col{flex:1;min-width:0}
+.title{font-weight:800;text-transform:uppercase;font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.sub{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos{font-weight:800;color:var(--accent);min-width:20px;text-align:center}
+.act{min-width:44px;min-height:44px;font-size:24px;color:var(--accent);border-radius:22px}
+.badge{color:var(--ok);font-size:12px;font-weight:700}
+.skeleton{height:72px;border-radius:8px;background:linear-gradient(90deg,var(--ph),var(--card),var(--ph));background-size:200% 100%;animation:sk 1.2s linear infinite;margin:8px 0}
+@keyframes sk{to{background-position:-200% 0}}
+@media (prefers-reduced-motion: reduce){.skeleton,.tab.bump,.mic.on,.menu-btn,.menu-btn svg{animation:none}}
+
+.next-line{padding:8px 4px;font-size:13px;color:var(--muted)}
+.now-card{background:var(--card);border:2px solid var(--accent);border-radius:10px;padding:8px;margin:4px 0 8px}
+.now-card .bar{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
+.now-card .times{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
+.bar{height:4px;background:rgba(127,127,127,.3);border-radius:2px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent)}
+
+.mini{background:var(--card);border-top:1px solid var(--line);padding:6px 12px}
+.mini-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+
+.transport{display:flex;justify-content:space-around;background:var(--card);border-top:1px solid var(--line);padding:4px 2px;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
+.transport button{flex:1;min-height:68px;border-radius:12px;touch-action:manipulation;color:var(--accent);display:flex;align-items:center;justify-content:center}
+.transport svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.transport #b-play svg{width:40px;height:40px;stroke-width:2.2}
+.transport button:active{background:var(--line)}
+
+.pill{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:10px 20px;border-radius:24px;font-weight:700;z-index:30}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(120px + env(safe-area-inset-bottom));background:#222;color:#fff;padding:12px 14px;border-radius:10px;z-index:30;text-align:center}
+.toast button{color:#ffb300;font-weight:700;margin-left:12px;min-height:36px}
+
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:min(86vw,340px);background:var(--card);z-index:41;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--card);z-index:41;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));border-radius:16px 16px 0 0;display:flex;flex-direction:column;gap:12px;box-shadow:0 -6px 24px rgba(0,0,0,.3)}
+h2,h3{margin:0}
+.field{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+.field.row{flex-direction:row;align-items:center;gap:10px;color:var(--fg);font-size:16px}
+.field.row input{width:22px;height:22px}
+input[type=text],input:not([type]),select,#a-url,#a-name,#d-dev{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font-size:16px}
+.info{font-size:13px;color:var(--muted);line-height:1.6;word-break:break-all}
+.btns{display:flex;gap:10px}
+.primary{flex:1;min-height:48px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700}
+@media (prefers-color-scheme: dark){.primary{color:#03283d}}
+.plain{min-height:48px;border-radius:10px;background:var(--line);padding:0 16px}
+.danger{min-height:48px;border-radius:10px;background:#37596f;color:#fff;font-weight:700}
+#m-items button{display:block;width:100%;text-align:left;min-height:52px;padding:0 8px;font-size:17px;border-bottom:1px solid var(--line)}
+#m-items button.bad{color:#546e7f;font-weight:700}
+
+.linkcard{display:flex;flex-direction:column;gap:10px;background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:10px;margin:8px 0}
+.linkcard .lc-head{font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:6px}
+.linkcard .lc-head svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.linkcard .row-item{margin:0;border:0;padding:0}
+.linkcard .btns button{min-height:50px;border-radius:12px;font-weight:700}
+.linkcard .btns .ghost{flex:1;background:var(--line);color:var(--fg)}
+
+/* ===== Chu to, nut to - de nhin cho nguoi lon tuoi ===== */
+.row-item{padding:8px;gap:10px}
+.thumb{flex:0 0 30%}
+.title{font-size:18px;line-height:1.25;-webkit-line-clamp:3}
+.sub{font-size:15px}
+.badge{font-size:16px}
+.dur{font-size:14px;padding:2px 6px}
+.pos{font-size:22px;min-width:28px}
+.act{min-width:60px;width:60px;min-height:60px;height:60px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;line-height:1;touch-action:manipulation}
+.act.plus{background:var(--accent);color:#fff;font-size:44px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.3);padding-bottom:4px}
+@media (prefers-color-scheme: dark){.act.plus{color:#03283d}}
+.act.more{background:var(--line);color:var(--fg);font-size:36px;font-weight:900;border:2px solid var(--accent)}
+.act:active{transform:scale(.92)}
+.row-item{flex-wrap:nowrap}
+
+/* thong bao "Da them" - giua man hinh, chu lon */
+.toast{left:16px;right:16px;bottom:auto;top:45%;transform:translateY(-50%);padding:22px 20px;border-radius:18px;font-size:26px;font-weight:800;line-height:1.3;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:60}
+.toast.ok{background:#1b8a3a;color:#fff;border:3px solid #fff}
+.toast .toast-text{word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.toast button{display:block;width:100%;margin:16px 0 0;min-height:64px;font-size:26px;font-weight:800;border-radius:12px;background:#ffb300;color:#222}
+
+/* menu mo tu dau ba cham: Them / Phat tiep theo / Phat ngay */
+.sheet h3{font-size:20px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#m-items{display:flex;flex-direction:column;gap:10px}
+#m-items button{min-height:76px;font-size:28px;font-weight:800;padding:0 20px;border:2px solid var(--accent);border-radius:14px;background:var(--bg);color:var(--fg)}
+#m-items button:active{background:var(--accent);color:#fff}
+#m-items button.bad{color:#b23c17;border-color:#b23c17}
+#m-close,.sheet .plain{min-height:64px;font-size:24px;font-weight:700}
+.sheet .primary{min-height:64px;font-size:24px}
+.next-line{font-size:16px}
+.tab{font-size:18px;min-height:56px}
+
+/* khu vuc ung ho (cuoi menu cai dat) */
+.donate{flex:1 1 auto;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding-top:4px}
+.donate-text{font-size:14px;line-height:1.3;text-align:center;font-weight:600;color:var(--fg)}
+.donate-qr{flex:1 1 0;min-height:0;max-width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:10px;background:#fff;cursor:pointer}
+.donate-big{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:16px}
+.donate-big img{max-width:100%;max-height:100%;border-radius:12px;background:#fff}
+
+/* ===== 3 tab: Tim kiem / Danh sach / Yeu thich ===== */
+.tab{font-size:15px;padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== Nut yeu thich (trai tim) ===== */
+.favbtn{display:inline-flex;align-items:center;margin-top:6px;min-height:42px;padding:0 14px;border-radius:21px;border:2px solid #e91e63;color:#e91e63;font-weight:800;font-size:15px;background:transparent;touch-action:manipulation}
+.favbtn.on{background:#e91e63;color:#fff}
+.favbtn:active{transform:scale(.94)}
+#fav-list .badge{margin-top:2px}
+
+/* ===== Bo suu tap hieu ung (tha tim, vo tay, phao giay...) ===== */
+.r-hint{font-size:14px;color:var(--muted);margin-top:-6px}
+#r-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-height:56vh;overflow-y:auto;padding:2px}
+.rbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:92px;padding:6px 2px;border:2px solid var(--accent);border-radius:16px;background:var(--bg);touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.rbtn .re{font-size:42px;line-height:1.15;pointer-events:none}
+.rbtn .rl{font-size:13px;font-weight:800;color:var(--fg);pointer-events:none;white-space:nowrap}
+.rbtn:active{background:var(--line);transform:scale(.92)}
+.rbtn.sent{animation:rpop .4s ease-out}
+@keyframes rpop{0%{transform:scale(1)}35%{transform:scale(1.28) rotate(-4deg)}70%{transform:scale(.96) rotate(3deg)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.rbtn.sent{animation:none}}

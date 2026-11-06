@@ -1,0 +1,14 @@
+{
+  "_note": "Bài phát tự động khi hàng đợi trống. 'queries' = từ khóa tìm kiếm (app tự tìm bài karaoke). 'videos' = danh sách cố định (tùy chọn), ví dụ {\"videoId\":\"XXXXXXXXXXX\",\"title\":\"Tên bài\"}.",
+  "queries": [
+    "karaoke nhạc trẻ beat chuẩn",
+    "karaoke nhạc vàng bolero beat chuẩn",
+    "karaoke song ca nam nữ beat chuẩn",
+    "karaoke nhạc trữ tình tone nam",
+    "karaoke nhạc trữ tình tone nữ",
+    "karaoke nhạc thiếu nhi",
+    "karaoke nhạc xuân tết",
+    "karaoke hits quốc tế"
+  ],
+  "videos": []
+}
