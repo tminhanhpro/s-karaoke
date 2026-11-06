@@ -67,7 +67,6 @@ class MainActivity : Activity(), IframeHost {
     private lateinit var bigText: TextView
     private lateinit var bigCap: TextView
     private lateinit var bClose: Button
-    private lateinit var hint: TextView
     private lateinit var react: ReactionView
     private lateinit var msgView: MessageView
     private var wallShown = false
@@ -335,23 +334,6 @@ class MainActivity : Activity(), IframeHost {
         mlp.rightMargin = safeX
         root.addView(qrMsg, mlp)
 
-        // Dong huong dan o goc tren ben phai khi dang phat bai (thay cho ma QR nho)
-        hint = TextView(this)
-        hint.setTextColor(Color.WHITE)
-        hint.textSize = 20f
-        hint.typeface = Typeface.DEFAULT_BOLD
-        hint.setShadowLayer(2f, 1f, 1f, Color.BLACK)
-        hint.setPadding(dp(16), dp(8), dp(16), dp(8))
-        val hbg = GradientDrawable()
-        hbg.setColor(0x99000000.toInt())
-        hbg.cornerRadius = dp(18).toFloat()
-        hint.background = hbg
-        hint.visibility = View.GONE
-        val hlp = FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END)
-        hlp.topMargin = safeY
-        hlp.rightMargin = safeX
-        root.addView(hint, hlp)
-
         // enlarged QR overlay
         overlay = LinearLayout(this)
         overlay.orientation = LinearLayout.VERTICAL
@@ -617,7 +599,6 @@ class MainActivity : Activity(), IframeHost {
         bigCap.text = if (vi()) "Mời quét mã QR để thêm bài" else "Scan the QR code to add songs"
         if (ip == null) {
             qrWrap.visibility = View.GONE
-            hint.visibility = View.GONE
             qrMsg.text = if (vi()) "Hãy kết nối Wi-Fi để dùng mã QR" else "Connect to Wi-Fi to use the QR code"
             qrMsg.visibility = View.VISIBLE
             return
@@ -630,16 +611,13 @@ class MainActivity : Activity(), IframeHost {
             bigQr.setImageBitmap(makeQr(url, 600))
             bigText.text = "http://$ip:${c.port}"
         }
-        // Man hinh cho: QR to o goc. Dang phat bai: KHONG hien QR, chi co dong huong dan "Bam OK".
+        // Man hinh cho: QR to o goc. Dang phat bai: an QR (bam OK de hien bang QR).
         qrWrap.visibility = if (wallShown) View.VISIBLE else View.GONE
-        hint.text = if (vi()) "Bấm OK để hiện QR Remote" else "Press OK to show the Remote QR"
-        hint.visibility = if (!wallShown && overlay.visibility != View.VISIBLE) View.VISIBLE else View.GONE
     }
 
     private fun toggleOverlay() {
         if (overlay.visibility == View.VISIBLE) hideOverlay() else {
             overlay.visibility = View.VISIBLE
-            hint.visibility = View.GONE
             overlayUntil = System.currentTimeMillis() + 15_000
             bClose.requestFocus()
         }

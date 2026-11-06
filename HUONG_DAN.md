@@ -114,13 +114,13 @@ Cài ứng dụng *Send Files to TV* trên cả điện thoại và TV, gửi fi
 
 ### Bước 10. Mở ứng dụng và hát!
 1. Mở ứng dụng **Savify Karaoke** trên TV. **Một bài hát sẽ tự phát** sau vài giây (cần có mạng).
-2. Khi chưa phát bài, **mã QR** to hiện ở góc trên bên phải. Khi đang phát bài, QR được ẩn đi và thay bằng dòng chữ **"Bấm OK để hiện QR Remote"**.
+2. Khi chưa phát bài, **mã QR** to hiện ở góc trên bên phải. Khi đang phát bài, QR được ẩn đi (bấm **OK** trên remote TV để hiện lại bảng mã QR).
 3. Dùng **điện thoại** (cùng Wi-Fi với TV): mở **Camera** → hướng vào mã QR → bấm vào đường link hiện ra.
 4. Trên điện thoại hiện ra màn hình điều khiển:
    - Gõ tên bài / ca sĩ vào ô **Tìm bài hát** → bấm dấu **+** để thêm bài vào danh sách.
    - Hàng nút phía dưới: ▶/⏸ (phát/dừng), ⏭ (bài kế), ⟳ (hát lại), 🔉🔊 (âm lượng), ☰♪ (😊 **Bộ sưu tập** hiệu ứng), ✎ (dán link YouTube). Xem danh sách bài đã chọn ở tab **DANH SÁCH** phía trên.
    - Bấm **♡ Yêu thích** dưới mỗi bài để lưu vào tab **♥ YÊU THÍCH** (lưu ngay trên điện thoại này, lần sau mở lại vẫn còn).
-   - Bấm nút 😊 để mở **Bộ sưu tập**: thả tim, vỗ tay, pháo giấy, pháo hoa, lửa, hoa hồng, cụng ly... Hiệu ứng sẽ bay lên màn hình TV ngay lập tức.
+   - Bấm nút 😊 để mở **Bộ sưu tập**: thả tim, vỗ tay, pháo giấy, pháo hoa, lửa, hoa hồng, cụng ly... Hiệu ứng sẽ bay lên màn hình TV ngay lập tức. Bộ sưu tập hiện có **56 hiệu ứng** (thêm sao băng, mặt trời, cá voi, cá heo, rồng lửa, đĩa bay, pháo tết, bom, điểm 100...).
 5. Muốn hiện mã QR khi đang phát bài: bấm nút **OK** trên remote TV → hiện bảng QR kèm dòng "Mời quét mã QR để thêm bài". Bấm **OK** lần nữa (hoặc **Back**) để đóng.
 
 **Mẹo:**

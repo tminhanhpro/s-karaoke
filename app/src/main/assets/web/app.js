@@ -463,7 +463,28 @@
     { id: 'kiss', e: '😘', vi: 'Hôn gió', en: 'Kisses' },
     { id: 'ghost', e: '👻', vi: 'Hú hồn', en: 'Boo!' },
     { id: 'cake', e: '🎂', vi: 'Sinh nhật', en: 'Birthday' },
-    { id: 'money', e: '🤑', vi: 'Phát tài', en: 'Jackpot' }
+    { id: 'money', e: '🤑', vi: 'Phát tài', en: 'Jackpot' },
+    // ---- 20 hieu ung moi (dot 2) ----
+    { id: 'meteor', e: '☄️', vi: 'Sao băng', en: 'Meteors' },
+    { id: 'sun', e: '☀️', vi: 'Mặt trời', en: 'Sunshine' },
+    { id: 'moon', e: '🌙', vi: 'Đêm sao', en: 'Starry night' },
+    { id: 'whale', e: '🐳', vi: 'Cá voi', en: 'Whale' },
+    { id: 'dolphin', e: '🐬', vi: 'Cá heo', en: 'Dolphins' },
+    { id: 'pizza', e: '🍕', vi: 'Mưa pizza', en: 'Pizza rain' },
+    { id: 'icecream', e: '🍦', vi: 'Kem mát', en: 'Ice cream' },
+    { id: 'popcorn', e: '🍿', vi: 'Bắp rang', en: 'Popcorn' },
+    { id: 'gift', e: '🎁', vi: 'Tặng quà', en: 'Gift' },
+    { id: 'sax', e: '🎷', vi: 'Saxophone', en: 'Sax' },
+    { id: 'trumpet', e: '🎺', vi: 'Kèn vang', en: 'Fanfare' },
+    { id: 'dragon', e: '🐉', vi: 'Rồng lửa', en: 'Dragon' },
+    { id: 'catlove', e: '😻', vi: 'Mèo mê', en: 'Cat love' },
+    { id: 'skull', e: '💀', vi: 'Xỉu ngang', en: 'Dead 💀' },
+    { id: 'ufo', e: '🛸', vi: 'Đĩa bay', en: 'UFO' },
+    { id: 'clover', e: '🍀', vi: 'May mắn', en: 'Good luck' },
+    { id: 'firecracker', e: '🧨', vi: 'Pháo tết', en: 'Firecrackers' },
+    { id: 'bomb', e: '💣', vi: 'Bùm!', en: 'Boom!' },
+    { id: 'hundred', e: '💯', vi: 'Điểm 100', en: 'Perfect' },
+    { id: 'muscle', e: '💪', vi: 'Cực khỏe', en: 'Powerful' }
   ];
   function renderReactions() {
     var g = $('r-grid'); g.textContent = '';

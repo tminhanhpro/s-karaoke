@@ -25,7 +25,11 @@ object ReactIds {
         // 20 hieu ung moi
         "rainbow", "unicorn", "rocket", "lightning", "snow", "sakura", "butterfly", "diamond",
         "trophy", "champagne", "cheers", "guitar", "drum", "cool", "partyface", "wow",
-        "kiss", "ghost", "cake", "money"
+        "kiss", "ghost", "cake", "money",
+        // 20 hieu ung moi (dot 2)
+        "meteor", "sun", "moon", "whale", "dolphin", "pizza", "icecream", "popcorn",
+        "gift", "sax", "trumpet", "dragon", "catlove", "skull", "ufo", "clover",
+        "firecracker", "bomb", "hundred", "muscle"
     )
 }
 
@@ -133,6 +137,7 @@ class ReactionView(ctx: Context) : View(ctx) {
             1f + c3 * (u - 1f).pow(3) + c1 * (u - 1f).pow(2)
         }
         3 -> u * u // tang toc dan (ten lua)
+        4 -> u // deu (bay ngang man hinh)
         else -> 1f - (1f - u) * (1f - u)
     }
 
@@ -509,6 +514,162 @@ class ReactionView(ctx: Context) : View(ctx) {
             "money" -> {
                 pop("🤑", 0.85f, 2.4f, wobble = 7f, pulse = 0.05f)
                 rain(arrayOf("💰", "💵", "💎", "💵"), 34, 50f, 110f, 2.2f, 300f, 540f)
+            }
+
+            // ======================= 20 hieu ung moi (dot 2) =======================
+            "meteor" -> {
+                // 3 sao bang rot cheo tu goc tren phai, de lai vet sang, cham dat thi bung no
+                for (i in 0 until 3) {
+                    val sz = big * 0.5f
+                    val tx = w * (0.28f + 0.22f * i); val ty = h * (0.5f + 0.06f * i)
+                    val sy = -sz; val sx = tx + (ty - sy)
+                    val mt = 0.85f; val dl = i * 0.45f
+                    val m = emo("☄️", sx, sy, sz, life = mt, delay = dl, env = 2)
+                    m.mt = mt; m.sx = sx; m.sy = sy; m.tx = tx; m.ty = ty; m.ease = 3
+                    for (k in 0 until 14) {
+                        val u = k / 14f; val e = u * u
+                        emo(if (k % 3 == 0) "✨" else "🔥", sx + (tx - sx) * e, sy + (ty - sy) * e, rnd(26f, 54f) * d,
+                            life = 0.6f, delay = dl + mt * u, env = 0)
+                    }
+                    flash(0x55FFB74D, dl + mt, 0.3f)
+                    burst(arrayOf("💥", "🔥", "✨", "⭐"), tx, ty, 16, 34f, 80f, 350f, 900f, dl + mt, 300f)
+                }
+            }
+            "sun" -> {
+                ring(0xFFFFB74D.toInt()); ring(0xFFFFE082.toInt(), 0.2f); ring(0xFFFFF3B0.toInt(), 0.4f)
+                val p = pop("☀️", 1.1f, 3.0f, wobble = 2f, pulse = 0.04f); p.vrot = 22f
+                flash(0x44FFE082, 0f, 0.5f)
+                burst(arrayOf("✨", "🌞", "⭐", "🌟"), w / 2, h / 2, 26, 34f, 84f, 400f, 1000f, 0.1f, 260f)
+            }
+            "moon" -> {
+                ring(0xFFB3C7FF.toInt())
+                pop("🌙", 1f, 3.2f, wobble = 6f, pulse = 0.03f)
+                rain(arrayOf("⭐", "✨", "🌟", "💫"), 30, 30f, 70f, 2.6f, 80f, 170f)
+            }
+            "whale" -> {
+                val sz = big * 0.85f
+                val y0 = h * 0.58f
+                val wh = emo("🐳", -sz, y0, sz, life = 3.2f, env = 2, rot = -4f)
+                wh.mt = 3.2f; wh.sx = -sz; wh.sy = y0; wh.tx = w + sz; wh.ty = y0; wh.ease = 4; wh.wobA = 6f; wh.wobS = 2.5f
+                for (i in 0 until 9) {
+                    val u = (i + 1) / 10f
+                    burst(arrayOf("💦", "💧", "✨"), -sz + (w + 2 * sz) * u, y0 - sz * 0.35f, 5, 28f, 56f, 160f, 520f, 3.2f * u, 520f)
+                }
+                rise(arrayOf("💧", "🐟", "💦"), 18, 34f, 70f, 2.4f, 140f, 280f)
+            }
+            "dolphin" -> {
+                for (i in 0 until 3) {
+                    val sz = rnd(100f, 150f) * d
+                    val speed = rnd(w * 0.22f, w * 0.3f)
+                    val p = emo("🐬", -sz, h * (0.78f - i * 0.06f), sz, vx = speed, life = (w + sz * 2f) / speed, delay = i * 0.45f, env = 2)
+                    p.hopH = rnd(0.9f, 1.5f) * sz * 1.8f; p.hopS = rnd(2.2f, 3.0f); p.flip = true
+                }
+                rise(arrayOf("💦", "💧", "🌊", "✨"), 22, 36f, 76f, 2.2f, 150f, 300f)
+            }
+            "pizza" -> {
+                rain(arrayOf("🍕", "🍕", "🍕", "🧀", "🍅"), 30, 56f, 120f, 2.2f, 220f, 400f)
+            }
+            "icecream" -> {
+                rain(arrayOf("🍦", "🍨", "🍧", "🍭", "🍦"), 30, 52f, 112f, 2.2f, 200f, 380f)
+            }
+            "popcorn" -> {
+                pop("🍿", 0.85f, 2.6f, wobble = 8f, pulse = 0.05f)
+                repeat(40) {
+                    val a = Math.toRadians(rnd(215f, 325f).toDouble()).toFloat()
+                    val v = rnd(600f, 1500f) * d
+                    emo(listOf("🍿", "🌽", "✨", "🍿").random(), w / 2, h * 0.55f, rnd(36f, 84f) * d,
+                        vx = cos(a) * v, vy = sin(a) * v, g = 700f * d, drag = 0.8f, life = rnd(1.8f, 2.8f),
+                        delay = rnd(0.1f, 1.2f), env = 3, rotSpeed = rnd(-200f, 200f))
+                }
+            }
+            "gift" -> {
+                dropIn("🎁", 0.95f, 3.0f)
+                ring(0xFFFF8FB5.toInt(), 0.85f)
+                flash(0x55FFFFFF, 0.9f, 0.3f)
+                burst(arrayOf("🎀", "🎉", "✨", "💖", "🎊"), w / 2, h / 2, 28, 36f, 90f, 450f, 1100f, 0.9f, 320f)
+                cannon(true, 30, 0.9f); cannon(false, 30, 0.9f)
+            }
+            "sax" -> {
+                pop("🎷", 0.9f, 2.8f, wobble = 12f, pulse = 0.03f)
+                repeat(32) {
+                    val a = Math.toRadians(rnd(190f, 350f).toDouble()).toFloat()
+                    val v = rnd(450f, 1100f) * d
+                    emo(listOf("🎵", "🎶", "🎼", "✨", "🎷").random(), w / 2, h * 0.5f, rnd(40f, 90f) * d,
+                        vx = cos(a) * v, vy = sin(a) * v, g = 240f * d, drag = 1.2f, life = rnd(1.8f, 2.8f),
+                        delay = rnd(0.1f, 1.3f), env = 3, rotSpeed = rnd(-100f, 100f))
+                }
+            }
+            "trumpet" -> {
+                ring(0xFFFFD43B.toInt()); ring(0xFFFFF3B0.toInt(), 0.25f)
+                pop("🎺", 0.9f, 2.6f, wobble = 10f, pulse = 0.08f)
+                cannon(true, 36, 0.2f); cannon(false, 36, 0.2f)
+                burst(arrayOf("🎶", "🎵", "⭐", "✨"), w / 2, h / 2, 22, 36f, 84f, 450f, 1100f, 0.15f, 300f)
+            }
+            "dragon" -> {
+                val sz = big * 0.8f
+                val y0 = h * 0.35f; val y1 = h * 0.6f
+                val dr = emo("🐉", -sz, y0, sz, life = 2.6f, env = 2)
+                dr.mt = 2.6f; dr.sx = -sz; dr.sy = y0; dr.tx = w + sz; dr.ty = y1; dr.ease = 4; dr.wobA = 5f; dr.wobS = 4f
+                for (i in 0 until 34) {
+                    val u = i / 34f
+                    emo(if (i % 4 == 0) "✨" else "🔥", -sz + (w + 2 * sz) * u - sz * 0.45f, y0 + (y1 - y0) * u, rnd(34f, 74f) * d,
+                        vy = rnd(-60f, 60f) * d, life = 0.8f, delay = 2.6f * u, env = 0)
+                }
+                flash(0x44FF7043, 0f, 0.5f)
+                rise(arrayOf("🔥", "✨"), 14, 40f, 90f, 2.0f, 200f, 380f)
+            }
+            "catlove" -> {
+                pop("😻", 0.95f, 2.8f, wobble = 7f, pulse = 0.05f)
+                rise(arrayOf("💖", "💕", "🐾", "❤️", "😻"), 26, 46f, 110f, 2.2f, 190f, 360f)
+            }
+            "skull" -> {
+                pop("💀", 0.95f, 2.6f, wobble = 9f, pulse = 0.05f)
+                rain(arrayOf("💀", "☠️", "😂", "💀"), 26, 50f, 104f, 2.0f, 260f, 460f)
+                flash(0x33B388FF, 0f, 0.4f)
+            }
+            "ufo" -> {
+                val sz = big * 0.6f
+                val y0 = h * 0.18f; val y1 = h * 0.3f
+                val u0 = emo("🛸", -sz, y0, sz, life = 2.8f, env = 2)
+                u0.mt = 2.8f; u0.sx = -sz; u0.sy = y0; u0.tx = w + sz; u0.ty = y1; u0.ease = 4; u0.wobA = 8f; u0.wobS = 5f
+                for (i in 0 until 26) {
+                    val u = i / 26f
+                    emo(if (i % 2 == 0) "✨" else "💫", -sz + (w + 2 * sz) * u, y0 + (y1 - y0) * u + sz * 0.4f, rnd(28f, 60f) * d,
+                        vy = rnd(120f, 260f) * d, life = 1.2f, delay = 2.8f * u, env = 0)
+                }
+                rise(arrayOf("👽", "✨", "🌟"), 12, 56f, 110f, 2.4f, 150f, 280f)
+            }
+            "clover" -> {
+                rain(arrayOf("🍀", "🍀", "🍀", "✨", "🍃"), 40, 36f, 90f, 2.8f, 110f, 240f)
+            }
+            "firecracker" -> {
+                pop("🧨", 0.7f, 1.0f, wobble = 12f, pulse = 0.1f)
+                for (i in 0 until 8) {
+                    val bx = rnd(w * 0.15f, w * 0.85f); val by = rnd(h * 0.2f, h * 0.7f)
+                    flash(0x55FFCC80, 0.9f + i * 0.14f, 0.15f)
+                    burst(arrayOf("💥", "✨", "🔥", "⭐"), bx, by, 8, 30f, 70f, 300f, 800f, 0.9f + i * 0.14f, 260f)
+                }
+                cannon(true, 24, 1.0f); cannon(false, 24, 1.0f)
+                for (i in 0 until 3) rocket(1.2f + i * 0.4f)
+            }
+            "bomb" -> {
+                pop("💣", 0.8f, 1.2f, wobble = 10f, pulse = 0.12f)
+                flash(0xCCFFFFFF.toInt(), 1.05f, 0.4f); flash(0x99FF8A65.toInt(), 1.45f, 0.4f)
+                ring(0xFFFF8A65.toInt(), 1.05f); ring(0xFFFFD43B.toInt(), 1.2f)
+                pop("💥", 1.2f, 1.6f, wobble = 4f, pulse = 0.08f, delay = 1.05f)
+                burst(arrayOf("💥", "🔥", "✨", "⭐"), w / 2, h / 2, 34, 36f, 96f, 500f, 1300f, 1.05f, 320f)
+            }
+            "hundred" -> {
+                ring(0xFFFF5252.toInt()); ring(0xFFFF8A80.toInt(), 0.2f)
+                pop("💯", 1.1f, 2.6f, wobble = 6f, pulse = 0.1f)
+                cannon(true, 30, 0.15f); cannon(false, 30, 0.15f)
+                burst(arrayOf("💯", "🔥", "✨"), w / 2, h / 2, 22, 36f, 86f, 450f, 1100f, 0.15f, 300f)
+            }
+            "muscle" -> {
+                ring(0xFFFFB74D.toInt())
+                pop("💪", 1f, 2.6f, wobble = 10f, pulse = 0.09f)
+                burst(arrayOf("💪", "🔥", "✨", "💥"), w / 2, h / 2, 24, 36f, 90f, 450f, 1100f, 0.1f, 300f)
+                rise(arrayOf("🔥", "💪"), 12, 50f, 100f, 1.8f, 220f, 400f)
             }
         }
         flush()
