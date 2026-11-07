@@ -69,6 +69,10 @@ class MainActivity : Activity(), IframeHost {
     private lateinit var bClose: Button
     private lateinit var react: ReactionView
     private lateinit var msgView: MessageView
+    private lateinit var volBox: LinearLayout
+    private lateinit var volText: TextView
+    private lateinit var volBar: android.widget.ProgressBar
+    private val volHide = Runnable { volBox.visibility = View.GONE }
     private var wallShown = false
 
     private var anim: ValueAnimator? = null
@@ -210,6 +214,7 @@ class MainActivity : Activity(), IframeHost {
         coreJobs.add(scope.launch { c.controller.ui.collect { renderUi(it) } })
         coreJobs.add(scope.launch { c.controller.reactions.collect { react.fire(it) } })
         coreJobs.add(scope.launch { c.controller.messages.collect { msgView.show(it.first, it.second) } })
+        coreJobs.add(scope.launch { c.controller.volumeEvents.collect { showVolume(it) } })
         coreJobs.add(scope.launch {
             while (true) {
                 updateQr(c)
@@ -273,6 +278,31 @@ class MainActivity : Activity(), IframeHost {
         // Tin nhan chu chay tu dien thoai: nam tren hieu ung, duoi cac nut/QR
         msgView = MessageView(this)
         root.addView(msgView, FrameLayout.LayoutParams(-1, -1))
+        // Thanh am luong: hien o giua duoi khi bam tang/giam am luong tu remote
+        volBox = LinearLayout(this)
+        volBox.orientation = LinearLayout.VERTICAL
+        volBox.gravity = Gravity.CENTER_HORIZONTAL
+        val vbg = GradientDrawable()
+        vbg.setColor(0xB3000000.toInt())
+        vbg.cornerRadius = dp(16).toFloat()
+        volBox.background = vbg
+        volBox.setPadding(dp(32), dp(16), dp(32), dp(20))
+        volText = TextView(this)
+        volText.setTextColor(Color.WHITE)
+        volText.textSize = 28f
+        volText.typeface = Typeface.DEFAULT_BOLD
+        volBar = android.widget.ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal)
+        volBar.max = 100
+        volBar.progressTintList = android.content.res.ColorStateList.valueOf(0xFFFFB300.toInt())
+        volBar.progressBackgroundTintList = android.content.res.ColorStateList.valueOf(0x66FFFFFF)
+        volBox.addView(volText, LinearLayout.LayoutParams(-2, -2))
+        val vbl = LinearLayout.LayoutParams(dp(360), dp(10))
+        vbl.topMargin = dp(10)
+        volBox.addView(volBar, vbl)
+        volBox.visibility = View.GONE
+        val vlp = FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL)
+        vlp.bottomMargin = (resources.displayMetrics.heightPixels * 0.15f).toInt()
+        root.addView(volBox, vlp)
 
         val dm = resources.displayMetrics
         val safeX = (dm.widthPixels * 0.05f).toInt()
@@ -546,6 +576,14 @@ class MainActivity : Activity(), IframeHost {
         } else if (!tickerHold) {
             strip.visibility = View.VISIBLE
         }
+    }
+
+    private fun showVolume(v: Int) {
+        volText.text = (if (vi()) "Âm lượng: " else "Volume: ") + v + "%"
+        volBar.progress = v
+        volBox.visibility = View.VISIBLE
+        volBox.removeCallbacks(volHide)
+        volBox.postDelayed(volHide, 1800)
     }
 
     private fun cancelTickerResume() {

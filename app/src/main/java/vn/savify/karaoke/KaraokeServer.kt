@@ -213,6 +213,12 @@ class KaraokeServer(
 
             method == Method.GET && p0 == "search" -> return search(s)
 
+            method == Method.GET && p0 == "channel-url" -> {
+                val id = Util.parseVideoId(s.parms["videoId"] ?: "")
+                    ?: throw ApiError(400, "INVALID_URL", "Bad video id")
+                return json(JSONObject().put("url", Resolver.channelUrl(id) ?: JSONObject.NULL))
+            }
+
             method == Method.POST && p0 == "resolve-url" -> {
                 val b = body(s)
                 val id = Util.parseVideoId(b.optString("url", ""))
@@ -291,6 +297,10 @@ class KaraokeServer(
                     "pause" -> ctl.onMain { ctl.noteActor(dev); ctl.pause() }
                     "resume" -> ctl.onMain { ctl.noteActor(dev); ctl.resume() }
                     "restart" -> ctl.onMain { ctl.noteActor(dev); ctl.restart() }
+                    "seek" -> ctl.onMain {
+                        ctl.noteActor(dev)
+                        ctl.seekTo(if (b.has("positionMs")) b.optLong("positionMs") else null, b.optLong("deltaMs", 0L))
+                    }
                     "volume" -> vol = ctl.onMain {
                         if (b.has("level")) ctl.setVolumeAbs(b.optInt("level"))
                         else ctl.changeVolume(b.optInt("delta", 0).coerceIn(-100, 100))
@@ -350,13 +360,36 @@ class KaraokeServer(
         throw ApiError(404, "NOT_FOUND", "Not found")
     }
 
+    private fun norm(x: String): String =
+        java.text.Normalizer.normalize(x.lowercase(), java.text.Normalizer.Form.NFD)
+            .replace(Regex("\\p{M}+"), "").replace('\u0111', 'd')
+
+    /** Tim theo kenh: lay toi da ~5 trang ket qua roi chi giu video cua kenh co ten khop. */
+    private fun searchByChannel(q: String, chan: String, page: Int, karaoke: Boolean): Pair<List<SearchHit>, Boolean> {
+        if (page > 0) return Pair(emptyList(), false)
+        val tokens = norm(chan).split(Regex("\\s+")).filter { it.isNotEmpty() }
+        val out = ArrayList<SearchHit>()
+        var p = 0
+        while (p < 5) {
+            val r = SearchService.search(q, p, karaoke)
+            for (h in r.first) {
+                val c = norm(h.channel)
+                if (tokens.all { c.contains(it) } && out.none { it.videoId == h.videoId }) out.add(h)
+            }
+            if (!r.second || out.size >= 20) break
+            p++
+        }
+        return Pair(out, false)
+    }
+
     private fun search(s: IHTTPSession): Response {
         val q = (s.parms["q"] ?: "").trim()
         if (q.isEmpty() || q.length > 200) throw ApiError(400, "INVALID_QUERY", "Query must be 1-200 chars")
         val page = (s.parms["page"] ?: "0").toIntOrNull()?.coerceIn(0, 20) ?: 0
         val karaoke = (s.parms["karaoke"] ?: "1") != "0"
+        val chan = (s.parms["channel"] ?: "").trim().take(100)
         val res = try {
-            SearchService.search(q, page, karaoke)
+            if (chan.isNotEmpty()) searchByChannel(q, chan, page, karaoke) else SearchService.search(q, page, karaoke)
         } catch (e: Throwable) {
             CrashLog.soft("SEARCH", e)
             throw ApiError(502, "UPSTREAM_FAILED", "Search failed: " + (e.message ?: e.javaClass.simpleName).take(160))

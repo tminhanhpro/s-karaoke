@@ -25,7 +25,7 @@
       fallback_hint: 'Playing via fallback player, ads may appear',
       net_wait: 'The TV lost its network. Waiting…', halted: 'Several songs failed in a row. Pick a song to continue.',
       invalid_url: 'Paste a valid YouTube video link', source: 'Search source', yt_src: 'YouTube',
-      volume_slider: 'TV volume', res_play: 'Video quality on TV', tv: 'TV', backend: 'Player', res: 'Max resolution', queue_full: 'Queue is full',
+      volume_slider: 'TV volume', res_play: 'Video quality on TV', search_by: 'Search by', m_song: 'Song', m_channel: 'Channel', m_lyrics: 'Lyrics', genre: 'Genre', open_channel: 'Open channel (its songs)', yt_channel: 'Channel page on YouTube', filter_label: 'Filter', filter_clear: 'tap to clear', tv: 'TV', backend: 'Player', res: 'Max resolution', queue_full: 'Queue is full',
       donate_text: 'Enjoying the app? Buy me a coffee ☕ Thank you so much! 💙',
       listening: 'Listening…', search_failed: 'Search failed. Try again.',
       link_found: 'YouTube link detected', add_end: 'Add to queue', add_next: 'Play next', link_loading: 'Reading the link…',
@@ -59,7 +59,7 @@
       fallback_hint: 'Đang phát bằng trình phát dự phòng, có thể có quảng cáo',
       net_wait: 'TV mất mạng. Đang chờ…', halted: 'Nhiều bài liên tiếp bị lỗi. Hãy chọn bài khác để tiếp tục.',
       invalid_url: 'Hãy dán link video YouTube hợp lệ', source: 'Nguồn tìm kiếm', yt_src: 'YouTube',
-      volume_slider: 'Âm lượng TV', res_play: 'Chất lượng video trên TV', tv: 'TV', backend: 'Trình phát', res: 'Độ phân giải tối đa', queue_full: 'Danh sách đã đầy',
+      volume_slider: 'Âm lượng TV', res_play: 'Chất lượng video trên TV', search_by: 'Tìm theo', m_song: 'Tên bài', m_channel: 'Kênh', m_lyrics: 'Lời bài hát', genre: 'Thể loại', open_channel: 'Mở kênh (xem bài của kênh)', yt_channel: 'Trang YouTube của kênh', filter_label: 'Đang lọc', filter_clear: 'bấm để bỏ lọc', tv: 'TV', backend: 'Trình phát', res: 'Độ phân giải tối đa', queue_full: 'Danh sách đã đầy',
       donate_text: 'Thấy app vui thì mời mình ly cà phê nhé ☕ Cảm ơn bạn nhiều lắm! 💙',
       listening: 'Đang nghe…', search_failed: 'Tìm kiếm lỗi. Thử lại nhé.',
       link_found: 'Đã nhận link YouTube', add_end: 'Thêm vào danh sách', add_next: 'Phát tiếp theo', link_loading: 'Đang đọc link…',
@@ -199,6 +199,7 @@
     return s;
   }
 
+  var seeking = false, seekTimer = null;
   function applyState(s) {
     var first = (S === null);
     S = s;
@@ -232,7 +233,13 @@
     if (np) {
       mini.hidden = false;
       $('mini-title').textContent = np.title;
-      $('mini-fill').style.width = (s.durationMs > 0 ? Math.min(100, s.positionMs * 100 / s.durationMs) : 0) + '%';
+      var rg = $('mini-range');
+      rg.disabled = !(s.durationMs > 0);
+      $('mini-dur').textContent = fmt(s.durationMs / 1000);
+      if (!seeking) {
+        rg.value = s.durationMs > 0 ? Math.min(1000, Math.round(s.positionMs * 1000 / s.durationMs)) : 0;
+        $('mini-pos').textContent = fmt(s.positionMs / 1000);
+      }
     } else { mini.hidden = true; }
 
     renderQueue();
@@ -261,7 +268,9 @@
         col.appendChild(el('div', 'title', np.title));
         col.appendChild(el('div', 'sub', np.channel + (np.source === 'SEED' ? ' · ' + (lang === 'vi' ? 'gợi ý' : 'suggested') : '')));
         r.appendChild(col);
-        r.appendChild(actsBox([favBtn(np)]));
+        var nmore = el('button', 'act more', '⋮'); nmore.setAttribute('aria-label', 'Menu');
+        nmore.addEventListener('click', function () { openNowMenu(np); });
+        r.appendChild(actsBox([nmore, favBtn(np)]));
         card.appendChild(r);
         var bar = el('div', 'bar'); var fill = el('div', 'fill'); fill.id = 'now-fill'; bar.appendChild(fill);
         card.appendChild(bar);
@@ -557,7 +566,79 @@
   }
 
   // ------------------------------------------------------------ search
-  var reqId = 0, page = 0, hasMore = false, loading = false, curQuery = '', results = [];
+  var reqId = 0, page = 0, hasMore = false, loading = false, curQuery = '', curRaw = '', results = [];
+  var searchMode = pref('smode') || 'song';          // song | channel | lyrics
+  var genre = pref('genre') || '';                   // tu khoa the loai ('' = tat ca)
+  var recentOpen = pref('recentOpen') === '1';
+  var GENRES = [
+    { k: '', vi: 'Tất cả', en: 'All' }, { k: 'remix', vi: 'Remix', en: 'Remix' }, { k: 'bolero', vi: 'Bolero', en: 'Bolero' },
+    { k: 'ballad', vi: 'Ballad', en: 'Ballad' }, { k: 'nhạc trẻ', vi: 'Nhạc trẻ', en: 'V-pop' }, { k: 'trữ tình', vi: 'Trữ tình', en: 'Lyrical' },
+    { k: 'nhạc vàng', vi: 'Nhạc vàng', en: 'Golden oldies' }, { k: 'rumba', vi: 'Rumba', en: 'Rumba' }, { k: 'EDM', vi: 'EDM', en: 'EDM' },
+    { k: 'nhạc sống', vi: 'Nhạc sống', en: 'Live band' }, { k: 'nhạc Hoa', vi: 'Nhạc Hoa', en: 'Chinese' }, { k: 'nhạc Hàn', vi: 'Nhạc Hàn', en: 'K-pop' },
+    { k: 'tiếng Anh', vi: 'Nhạc Anh', en: 'English' }, { k: 'thiếu nhi', vi: 'Thiếu nhi', en: 'Kids' }
+  ];
+  var MODES = [{ k: 'song', l: 'm_song' }, { k: 'channel', l: 'm_channel' }, { k: 'lyrics', l: 'm_lyrics' }];
+  function effQuery(q) {
+    q = (q || '').trim();
+    if (q && searchMode === 'lyrics') q = '"' + q + '" lời bài hát';
+    return (q + (genre ? ' ' + genre : '')).trim();
+  }
+  function genreLabel(k) { for (var i = 0; i < GENRES.length; i++) if (GENRES[i].k === k) return GENRES[i][lang] || GENRES[i].vi; return k; }
+  function renderFilterChips() {
+    var mb = $('y-modes'); mb.textContent = '';
+    MODES.forEach(function (m) {
+      var b = el('button', searchMode === m.k ? 'on' : null, t(m.l));
+      b.addEventListener('click', function () { searchMode = m.k; pref('smode', m.k); renderFilterChips(); filterChanged(); });
+      mb.appendChild(b);
+    });
+    var gb = $('y-genres'); gb.textContent = '';
+    GENRES.forEach(function (g) {
+      var b = el('button', genre === g.k ? 'on' : null, g[lang] || g.vi);
+      b.addEventListener('click', function () {
+        genre = g.k; pref('genre', g.k); renderFilterChips(); updateFilterUi();
+        closeAll(); clearTimeout(debounce); showTab('search');
+        try { $('view-search').parentNode.scrollTop = 0; } catch (e) {}
+        doSearch($('q').value, true); renderRecent();
+      });
+      gb.appendChild(b);
+    });
+  }
+  function updateFilterUi() {
+    var active = searchMode !== 'song' || !!genre;
+    $('btn-yt').classList.toggle('on', active);
+    var fl = $('filter-line');
+    if (!active) { fl.hidden = true; return; }
+    var parts = [];
+    if (searchMode !== 'song') parts.push(t(searchMode === 'channel' ? 'm_channel' : 'm_lyrics'));
+    if (genre) parts.push(genreLabel(genre));
+    fl.textContent = '⚙ ' + t('filter_label') + ': ' + parts.join(' · ') + ' (' + t('filter_clear') + ')';
+    fl.hidden = false;
+  }
+  function filterChanged() {
+    updateFilterUi();
+    clearTimeout(debounce);
+    debounce = setTimeout(function () { showTab('search'); doSearch($('q').value, true); renderRecent(); }, 400);
+  }
+  function clearFilters() {
+    searchMode = 'song'; genre = ''; pref('smode', 'song'); pref('genre', '');
+    renderFilterChips(); filterChanged();
+  }
+  function searchChannel(name) {
+    if (!name) return;
+    searchMode = 'channel'; genre = ''; pref('smode', 'channel'); pref('genre', '');
+    $('q').value = name; renderFilterChips(); onInput(true);
+  }
+  function openChannel(it) {
+    api('GET', '/api/channel-url?videoId=' + encodeURIComponent(it.videoId)).then(function (r) {
+      location.href = r.url || ('https://www.youtube.com/results?sp=EgIQAg%253D%253D&search_query=' + encodeURIComponent(it.channel || ''));
+    }).catch(function () { toast(t('err_generic')); });
+  }
+  function channelEntries(it) {
+    return [
+      { label: t('open_channel'), run: function () { searchChannel(it.channel); } },
+      { label: t('yt_channel'), run: function () { openChannel(it); } }
+    ];
+  }
   var debounce = null;
 
   function recents() { try { return JSON.parse(pref('recent') || '[]'); } catch (e) { return []; } }
@@ -567,8 +648,12 @@
   }
   function renderRecent() {
     var box = $('recent'); box.textContent = '';
-    if ($('q').value.trim()) return;
-    recents().forEach(function (q) {
+    var wrap = $('recent-wrap'), list = recents();
+    if ($('q').value.trim() || !list.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    box.classList.toggle('open', recentOpen);
+    $('recent-toggle').textContent = recentOpen ? '▴' : '▾';
+    list.forEach(function (q) {
       var b = el('button', null, q);
       b.addEventListener('click', function () { $('q').value = q; onInput(true); });
       box.appendChild(b);
@@ -607,13 +692,14 @@
   function doSearch(q, reset) {
     q = q.trim();
     if (q && reset && ytLink(q)) { showLinkCard(q); return; }
-    if (!q) { results = []; $('results').textContent = ''; $('results-status').textContent = ''; renderRecent(); return; }
-    if (reset) { page = 0; results = []; hasMore = false; curQuery = q; $('results').textContent = ''; pushRecentLater(q); }
+    var eq = effQuery(q);
+    if (!eq) { ++reqId; results = []; curQuery = ''; curRaw = ''; hasMore = false; loading = false; $('results').textContent = ''; $('results-status').textContent = ''; renderRecent(); return; }
+    if (reset) { page = 0; results = []; hasMore = false; curQuery = eq; curRaw = q; $('results').textContent = ''; if (q) pushRecentLater(q); }
     var my = ++reqId;
     loading = true;
     $('results-status').textContent = '';
     var sk = el('li', 'skeleton'); sk.id = 'sk'; $('results').appendChild(sk);
-    api('GET', '/api/search?q=' + encodeURIComponent(q) + '&page=' + page + '&karaoke=' + (karaoke ? 1 : 0))
+    api('GET', '/api/search?q=' + encodeURIComponent(eq) + '&page=' + page + '&karaoke=' + (karaoke ? 1 : 0) + ((searchMode === 'channel' && q) ? '&channel=' + encodeURIComponent(q) : ''))
       .then(function (r) {
         if (my !== reqId) return;
         removeSk();
@@ -629,7 +715,7 @@
       });
   }
   var recentTimer = null;
-  function pushRecentLater(q) { clearTimeout(recentTimer); recentTimer = setTimeout(function () { if (q === curQuery) pushRecent(q); }, 1500); }
+  function pushRecentLater(q) { clearTimeout(recentTimer); recentTimer = setTimeout(function () { if (q === curRaw) pushRecent(q); }, 1500); }
   function removeSk() { var s = $('sk'); if (s) s.remove(); }
 
   function songRow(it, inFavs) {
@@ -668,6 +754,7 @@
   function onInput(immediate) {
     var v = $('q').value;
     $('q-clear').hidden = !v;
+    updateFilterUi();
     showTab('search');
     clearTimeout(debounce);
     debounce = setTimeout(function () { doSearch(v, true); }, immediate ? 0 : 300);
@@ -679,7 +766,7 @@
   function setupScroll() {
     if (!('IntersectionObserver' in window)) return;
     io = new IntersectionObserver(function (entries) {
-      if (entries[0].isIntersecting && hasMore && !loading && curQuery) doSearch(curQuery, false);
+      if (entries[0].isIntersecting && hasMore && !loading && curQuery) doSearch(curRaw, false);
     }, { rootMargin: '300px' });
     io.observe($('sentinel'));
   }
@@ -725,7 +812,10 @@
           });
         } },
       favEntry(it)
-    ]);
+    ].concat(channelEntries(it)));
+  }
+  function openNowMenu(it) {
+    openMenu(it.title, channelEntries(it).concat([favEntry(it)]));
   }
   function openQueueMenu(it, idx) {
     var list = [
@@ -735,6 +825,7 @@
     if (idx > 0) list.push({ label: '↑ ' + t('move_up'), run: function () { command('POST', '/api/queue/reorder', { itemId: it.itemId, newIndex: idx - 1 }); } });
     if (S && idx < S.queue.length - 1) list.push({ label: '↓ ' + t('move_down'), run: function () { command('POST', '/api/queue/reorder', { itemId: it.itemId, newIndex: idx + 1 }); } });
     list.push(favEntry(it));
+    channelEntries(it).forEach(function (e) { list.push(e); });
     list.push({ label: t('remove'), bad: true, run: function () { command('DELETE', '/api/queue/' + it.itemId); } });
     openMenu(it.title, list);
   }
@@ -833,6 +924,9 @@
     $('donate-text').textContent = t('donate_text');
     $('y-title').textContent = t('source') + ': ' + t('yt_src');
     $('y-karaoke-l').textContent = t('karaoke_mode');
+    $('y-mode-l').textContent = t('search_by');
+    $('y-genre-l').textContent = t('genre');
+    renderFilterChips(); updateFilterUi();
     $('y-close').textContent = t('close');
     $('a-title').textContent = t('paste_title');
     $('a-url').placeholder = t('paste_ph');
@@ -901,6 +995,22 @@
     $('d-vol').addEventListener('change', function () {
       api('POST', '/api/player/volume', { level: Number($('d-vol').value) }).then(function (r) { if (r.state) applyState(r.state); });
     });
+    $('recent-toggle').addEventListener('click', function () { recentOpen = !recentOpen; pref('recentOpen', recentOpen ? '1' : '0'); renderRecent(); });
+    $('filter-line').addEventListener('click', clearFilters);
+    var rg = $('mini-range');
+    rg.addEventListener('pointerdown', function () { seeking = true; clearTimeout(seekTimer); });
+    rg.addEventListener('input', function () {
+      seeking = true;
+      if (S && S.durationMs > 0) $('mini-pos').textContent = fmt(Number(rg.value) * S.durationMs / 1000000);
+    });
+    rg.addEventListener('change', function () {
+      if (!S || !(S.durationMs > 0)) { seeking = false; return; }
+      var pos = Math.round(Number(rg.value) * S.durationMs / 1000);
+      command('POST', '/api/player/seek', { positionMs: pos });
+      clearTimeout(seekTimer); seekTimer = setTimeout(function () { seeking = false; }, 1200);
+    });
+    $('mini-back').addEventListener('click', function () { command('POST', '/api/player/seek', { deltaMs: -10000 }); });
+    $('mini-fwd').addEventListener('click', function () { command('POST', '/api/player/seek', { deltaMs: 10000 }); });
     $('d-res').addEventListener('change', function () {
       api('POST', '/api/settings', { maxHeight: Number($('d-res').value) }).then(function (r) { if (r.state) applyState(r.state); }).catch(function () {});
     });

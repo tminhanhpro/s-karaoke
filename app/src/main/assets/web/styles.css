@@ -46,7 +46,11 @@ main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .view{padding:6px 10px 12px}
 .list{list-style:none;margin:0;padding:0}
 .status{padding:16px;text-align:center;color:var(--muted)}
-.recent{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+.recent-wrap{display:flex;align-items:flex-start;gap:8px;padding:8px 0}
+.recent{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:8px;padding:0;max-height:40px;overflow:hidden}
+.recent.open{max-height:none}
+.recent-toggle{flex:0 0 auto;width:48px;height:40px;border-radius:18px;background:var(--card);border:1px solid var(--line);color:var(--accent);font-size:20px;font-weight:800;touch-action:manipulation}
+.filter-line{display:block;width:100%;text-align:left;margin:4px 0;padding:8px 12px;border-radius:10px;background:var(--card);border:1px solid var(--accent);color:var(--fg);font-size:15px;font-weight:700}
 .recent button{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px 14px;min-height:40px}
 
 .row-item{display:flex;gap:10px;align-items:center;background:var(--card);border-radius:8px;margin:8px 0;padding:6px;border:1px solid var(--line)}
@@ -192,3 +196,16 @@ input[type=text],input:not([type]),select,#a-url,#a-name,#d-dev{min-height:44px;
 .qchip{flex:0 0 auto;white-space:nowrap;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--accent);background:var(--bg);color:var(--fg);font-size:15px;font-weight:700;touch-action:manipulation}
 .qchip:active{background:var(--accent);color:#fff}
 #r-grid{max-height:40vh}
+
+/* tua nhanh */
+.mini-seek{display:flex;align-items:center;gap:8px}
+.mini-seek .tm{font-size:12px;color:var(--muted);min-width:34px;text-align:center}
+.mini-seek input[type=range]{flex:1;min-width:0;height:34px;margin:0;accent-color:var(--accent)}
+.mini-seek .sk{min-width:54px;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--accent);font-weight:800;font-size:15px;touch-action:manipulation}
+
+/* bo loc tim kiem */
+#sheet-yt{max-height:88vh;overflow-y:auto}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:44px;padding:0 16px;border-radius:22px;border:2px solid var(--line);background:var(--bg);color:var(--fg);font-size:18px;font-weight:700;touch-action:manipulation}
+.chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.on{background:#ffb300;color:#222}

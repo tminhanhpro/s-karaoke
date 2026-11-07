@@ -266,6 +266,13 @@ object Resolver {
         return r
     }
 
+    /** Link kenh cua video (de mo kenh tren dien thoai). */
+    fun channelUrl(videoId: String): String? = try {
+        StreamInfo.getInfo("https://www.youtube.com/watch?v=$videoId").uploaderUrl?.takeIf { it.isNotEmpty() }
+    } catch (e: Throwable) {
+        null
+    }
+
     /** Title/channel/duration only (used by "paste link"). Returns null on failure. */
     fun meta(videoId: String): Resolved? = try {
         val info = StreamInfo.getInfo("https://www.youtube.com/watch?v=$videoId")

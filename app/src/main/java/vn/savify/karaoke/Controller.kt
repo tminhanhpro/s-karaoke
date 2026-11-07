@@ -68,6 +68,9 @@ class Controller(
     val reactions = MutableSharedFlow<String>(extraBufferCapacity = 32, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     fun react(id: String) { reactions.tryEmit(id) }
 
+    /** Moi lan doi am luong tu remote -> TV hien thanh am luong (gia tri 0..100). */
+    val volumeEvents = MutableSharedFlow<Int>(extraBufferCapacity = 8, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+
     /** Tin nhan chu chay tu remote -> man hinh TV (nguoi gui, noi dung). */
     val messages = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     fun message(sender: String, text: String) { messages.tryEmit(Pair(sender, text)) }
@@ -330,7 +333,20 @@ class Controller(
         player.volume = volume / 100f
         iframeHost?.setVolume(volume)
         publish()
+        volumeEvents.tryEmit(volume)
         return volume
+    }
+
+    /** Tua: positionMs = vi tri tuyet doi, hoac deltaMs = tua tuong doi (am = lui). */
+    fun seekTo(positionMs: Long?, deltaMs: Long) {
+        if (current == null || (state != PState.PLAYING && state != PState.PAUSED)) return
+        val pos = if (usingIframe) iframePos else player.currentPosition
+        var dur = if (usingIframe) iframeDur else player.duration
+        if (dur == C.TIME_UNSET || dur <= 0) dur = (current?.durationSec ?: 0) * 1000L
+        var target = (positionMs ?: (pos + deltaMs)).coerceAtLeast(0L)
+        if (dur > 0) target = target.coerceAtMost(maxOf(0L, dur - 1500L))
+        if (usingIframe) iframeHost?.seek(target) else player.seekTo(target)
+        lastPosChangeAt = System.currentTimeMillis()
     }
 
     fun changeVolume(delta: Int): Int = setVolumeAbs(volume + delta)
