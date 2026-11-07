@@ -305,6 +305,26 @@ class Controller(
         if (usingIframe) iframeHost?.seek(0) else player.seekTo(0)
     }
 
+    /** Doi chat luong video toi da (360/480/720/1080). Ap dung ngay cho bai dang phat: tai lai tu vi tri hien tai. */
+    fun setMaxHeight(h: Int) {
+        val v = when {
+            h <= 360 -> 360
+            h <= 480 -> 480
+            h <= 720 -> 720
+            else -> 1080
+        }
+        if (v == settings.maxHeight) return
+        settings.maxHeight = v
+        prefetchedId = null
+        val cur = current
+        if (cur != null && !usingIframe && (state == PState.PLAYING || state == PState.PAUSED)) {
+            playItem(cur, player.currentPosition)
+        } else {
+            publish()
+        }
+        prefetchHead()
+    }
+
     fun setVolumeAbs(level: Int): Int {
         volume = level.coerceIn(0, 100)
         player.volume = volume / 100f

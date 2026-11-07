@@ -73,6 +73,9 @@ class MainActivity : Activity(), IframeHost {
 
     private var anim: ValueAnimator? = null
     private var tickerShown: String? = null
+    /** true khi dong chu da chay xong 1 luot va dang an cho 30 giay truoc khi chay lai */
+    private var tickerHold = false
+    private var tickerResume: Runnable? = null
     private var lastUi: UiState = UiState()
     private var lastQrUrl: String? = null
     private var overlayUntil = 0L
@@ -527,21 +530,32 @@ class MainActivity : Activity(), IframeHost {
         if (!show) {
             if (strip.visibility != View.GONE) {
                 anim?.cancel()
+                cancelTickerResume()
                 strip.visibility = View.GONE
-                tickerShown = null
             }
+            tickerShown = null
+            tickerHold = false
             return
         }
         val text = (if (vi()) "Tiếp theo: " else "Next: ") + u.nextText
-        strip.visibility = View.VISIBLE
         if (text != tickerShown) {
             tickerShown = text
+            tickerHold = false
+            strip.visibility = View.VISIBLE
             startTicker(c, text)
+        } else if (!tickerHold) {
+            strip.visibility = View.VISIBLE
         }
+    }
+
+    private fun cancelTickerResume() {
+        tickerResume?.let { strip.removeCallbacks(it) }
+        tickerResume = null
     }
 
     private fun startTicker(c: Core, text: String) {
         anim?.cancel()
+        cancelTickerResume()
         tickerText.text = text
         val w = tickerText.paint.measureText(text).toInt() + dp(24)
         tickerText.layoutParams = FrameLayout.LayoutParams(w, FrameLayout.LayoutParams.MATCH_PARENT)
@@ -557,8 +571,27 @@ class MainActivity : Activity(), IframeHost {
             val a = ValueAnimator.ofFloat(sw, end)
             a.duration = (dist / speed * 1000).toLong().coerceAtLeast(1000)
             a.interpolator = LinearInterpolator()
-            a.repeatCount = ValueAnimator.INFINITE
             a.addUpdateListener { tickerText.translationX = it.animatedValue as Float }
+            // Chay 1 luot -> an -> sau 30 giay chay lai (lap mai)
+            a.addListener(object : android.animation.AnimatorListenerAdapter() {
+                private var cancelled = false
+                override fun onAnimationCancel(animation: android.animation.Animator) { cancelled = true }
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    if (cancelled || tickerShown != text) return
+                    tickerHold = true
+                    strip.visibility = View.GONE
+                    val r = Runnable {
+                        tickerResume = null
+                        if (tickerShown == text) {
+                            tickerHold = false
+                            strip.visibility = View.VISIBLE
+                            go()
+                        }
+                    }
+                    tickerResume = r
+                    strip.postDelayed(r, 30_000)
+                }
+            })
             anim = a
             a.start()
         }
@@ -648,7 +681,7 @@ class MainActivity : Activity(), IframeHost {
             .setItems(items) { d, which ->
                 when (which) {
                     0 -> s.backend = when (s.backend) { "AUTO" -> "EXOPLAYER"; "EXOPLAYER" -> "IFRAME"; else -> "AUTO" }
-                    1 -> s.maxHeight = when (s.maxHeight) { 480 -> 720; 720 -> 1080; else -> 480 }
+                    1 -> c.controller.setMaxHeight(when (s.maxHeight) { 360 -> 480; 480 -> 720; 720 -> 1080; else -> 360 })
                     2 -> s.tickerMode = when (s.tickerMode) { "ALWAYS" -> "LAST_30S"; "LAST_30S" -> "OFF"; else -> "ALWAYS" }
                     3 -> s.seedAutoplay = !s.seedAutoplay
                     4 -> s.tvLang = if (s.tvLang == "vi") "en" else "vi"

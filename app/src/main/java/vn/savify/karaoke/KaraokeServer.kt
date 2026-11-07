@@ -330,6 +330,15 @@ class KaraokeServer(
                 return json(JSONObject().put("ok", true).put("dropped", !pass))
             }
 
+            method == Method.POST && p0 == "settings" -> {
+                val b = body(s)
+                if (b.has("maxHeight")) {
+                    val h = b.optInt("maxHeight", 720)
+                    ctl.onMain { ctl.noteActor(dev); ctl.setMaxHeight(h) }
+                }
+                return reply()
+            }
+
             method == Method.POST && p0 == "pairing" && p1 == "reset" -> {
                 body(s)
                 settings.token = Util.newToken()

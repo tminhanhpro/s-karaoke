@@ -25,7 +25,7 @@
       fallback_hint: 'Playing via fallback player, ads may appear',
       net_wait: 'The TV lost its network. Waiting…', halted: 'Several songs failed in a row. Pick a song to continue.',
       invalid_url: 'Paste a valid YouTube video link', source: 'Search source', yt_src: 'YouTube',
-      volume_slider: 'TV volume', tv: 'TV', backend: 'Player', res: 'Max resolution', queue_full: 'Queue is full',
+      volume_slider: 'TV volume', res_play: 'Video quality on TV', tv: 'TV', backend: 'Player', res: 'Max resolution', queue_full: 'Queue is full',
       donate_text: 'Enjoying the app? Buy me a coffee ☕ Thank you so much! 💙',
       listening: 'Listening…', search_failed: 'Search failed. Try again.',
       link_found: 'YouTube link detected', add_end: 'Add to queue', add_next: 'Play next', link_loading: 'Reading the link…',
@@ -59,7 +59,7 @@
       fallback_hint: 'Đang phát bằng trình phát dự phòng, có thể có quảng cáo',
       net_wait: 'TV mất mạng. Đang chờ…', halted: 'Nhiều bài liên tiếp bị lỗi. Hãy chọn bài khác để tiếp tục.',
       invalid_url: 'Hãy dán link video YouTube hợp lệ', source: 'Nguồn tìm kiếm', yt_src: 'YouTube',
-      volume_slider: 'Âm lượng TV', tv: 'TV', backend: 'Trình phát', res: 'Độ phân giải tối đa', queue_full: 'Danh sách đã đầy',
+      volume_slider: 'Âm lượng TV', res_play: 'Chất lượng video trên TV', tv: 'TV', backend: 'Trình phát', res: 'Độ phân giải tối đa', queue_full: 'Danh sách đã đầy',
       donate_text: 'Thấy app vui thì mời mình ly cà phê nhé ☕ Cảm ơn bạn nhiều lắm! 💙',
       listening: 'Đang nghe…', search_failed: 'Tìm kiếm lỗi. Thử lại nhé.',
       link_found: 'Đã nhận link YouTube', add_end: 'Thêm vào danh sách', add_next: 'Phát tiếp theo', link_loading: 'Đang đọc link…',
@@ -238,6 +238,7 @@
     renderQueue();
     refreshResultBadges();
     $('d-vol').value = s.volume;
+    if (s.settings && document.activeElement !== $('d-res')) $('d-res').value = String(s.settings.maxHeight);
   }
 
   function renderQueue() {
@@ -826,6 +827,7 @@
     $('d-dev-l').textContent = t('device');
     $('d-karaoke-l').textContent = t('karaoke_mode');
     $('d-vol-l').textContent = t('volume_slider');
+    $('d-res-l').textContent = t('res_play');
     $('d-reset').textContent = t('reset_pairing');
     $('d-close').textContent = t('close');
     $('donate-text').textContent = t('donate_text');
@@ -898,6 +900,9 @@
     $('y-karaoke').addEventListener('change', function () { setKaraoke($('y-karaoke').checked); });
     $('d-vol').addEventListener('change', function () {
       api('POST', '/api/player/volume', { level: Number($('d-vol').value) }).then(function (r) { if (r.state) applyState(r.state); });
+    });
+    $('d-res').addEventListener('change', function () {
+      api('POST', '/api/settings', { maxHeight: Number($('d-res').value) }).then(function (r) { if (r.state) applyState(r.state); }).catch(function () {});
     });
     $('d-reset').addEventListener('click', function () {
       if (!confirm(t('reset_confirm'))) return;
