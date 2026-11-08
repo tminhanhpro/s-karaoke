@@ -10,6 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Savify Karaoke</title>
+<script src="/static/boot.js"></script>
 <link rel="stylesheet" href="/static/styles.css">
 <link rel="icon" href="/static/icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -68,14 +69,18 @@
 </div>
 
 <footer class="transport">
-  <button id="b-play" aria-label="Play/Pause"></button>
-  <button id="b-next" aria-label="Next"></button>
-  <button id="b-replay" aria-label="Replay"></button>
-  <button id="b-mic" aria-label="Mic"></button>
-  <button id="b-vdown" aria-label="Volume down"></button>
-  <button id="b-vup" aria-label="Volume up"></button>
-  <button id="b-react" aria-label="Reactions"></button>
-  <button id="b-add" aria-label="Add link"></button>
+  <div class="trow main">
+    <button id="b-play" aria-label="Play/Pause"><span class="ic"></span><span class="lbl"></span></button>
+    <button id="b-next" aria-label="Next"><span class="ic"></span><span class="lbl"></span></button>
+    <button id="b-vdown" aria-label="Volume down"><span class="ic"></span><span class="lbl"></span></button>
+    <button id="b-vup" aria-label="Volume up"><span class="ic"></span><span class="lbl"></span></button>
+  </div>
+  <div class="trow sec">
+    <button id="b-replay" aria-label="Replay"><span class="ic"></span><span class="lbl"></span></button>
+    <button id="b-mic" aria-label="Mic"><span class="ic"></span><span class="lbl"></span></button>
+    <button id="b-react" aria-label="Reactions"><span class="ic"></span><span class="lbl"></span></button>
+    <button id="b-add" aria-label="Add link"><span class="ic"></span><span class="lbl"></span></button>
+  </div>
 </footer>
 
 <div id="pill" class="pill" hidden></div>
@@ -86,6 +91,7 @@
 
 <aside id="drawer" class="drawer" hidden>
   <h2 id="d-title"></h2>
+  <div class="field"><span id="d-ui-l"></span><div id="d-ui" class="chips"></div></div>
   <label class="field"><span id="d-lang-l"></span>
     <select id="d-lang"><option value="vi">Tiếng Việt</option><option value="en">English</option></select>
   </label>
@@ -95,6 +101,9 @@
   <label class="field"><span id="d-res-l"></span>
     <select id="d-res"><option value="360">360p</option><option value="480">480p</option><option value="720">720p (HD)</option><option value="1080">1080p (Full HD)</option></select>
   </label>
+  <div class="field"><span id="d-theme-l"></span><div id="d-theme" class="chips"></div></div>
+  <div class="field" id="d-fs-field"><span id="d-fs-l"></span><div id="d-fs" class="chips"></div></div>
+  <label class="field row"><input id="d-hc" type="checkbox"><span id="d-hc-l"></span></label>
   <div class="info" id="d-info"></div>
   <button id="d-reset" class="danger"></button>
   <button id="d-close" class="plain"></button>

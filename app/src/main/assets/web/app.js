@@ -25,7 +25,7 @@
       fallback_hint: 'Playing via fallback player, ads may appear',
       net_wait: 'The TV lost its network. Waiting…', halted: 'Several songs failed in a row. Pick a song to continue.',
       invalid_url: 'Paste a valid YouTube video link', source: 'Search source', yt_src: 'YouTube',
-      volume_slider: 'TV volume', res_play: 'Video quality on TV', search_by: 'Search by', m_song: 'Song', m_channel: 'Channel', m_lyrics: 'Lyrics', genre: 'Genre', open_channel: 'Open channel (its songs)', yt_channel: 'Channel page on YouTube', filter_label: 'Filter', filter_clear: 'tap to clear', tv: 'TV', backend: 'Player', res: 'Max resolution', queue_full: 'Queue is full',
+      volume_slider: 'TV volume', res_play: 'Video quality on TV', l_play: 'Play', l_pause: 'Pause', l_next: 'Next song', l_replay: 'Replay', l_mic: 'Mic', l_vdown: 'Quieter', l_vup: 'Louder', l_react: 'Cheer', l_link: 'Paste link', text_size: 'Text size', ui_mode: 'Interface style', ui_new: 'New (big, labeled)', ui_old: 'Classic (compact)', theme: 'Display mode', th_auto: 'Auto', th_light: 'Light', th_dark: 'Dark', fs_m: 'Normal', fs_l: 'Large', fs_xl: 'Extra large', hc_mode: 'High contrast', search_by: 'Search by', m_song: 'Song', m_channel: 'Channel', m_lyrics: 'Lyrics', genre: 'Genre', open_channel: 'Open channel (its songs)', yt_channel: 'Channel page on YouTube', filter_label: 'Filter', filter_clear: 'tap to clear', tv: 'TV', backend: 'Player', res: 'Max resolution', queue_full: 'Queue is full',
       donate_text: 'Enjoying the app? Buy me a coffee ☕ Thank you so much! 💙',
       listening: 'Listening…', search_failed: 'Search failed. Try again.',
       link_found: 'YouTube link detected', add_end: 'Add to queue', add_next: 'Play next', link_loading: 'Reading the link…',
@@ -59,7 +59,7 @@
       fallback_hint: 'Đang phát bằng trình phát dự phòng, có thể có quảng cáo',
       net_wait: 'TV mất mạng. Đang chờ…', halted: 'Nhiều bài liên tiếp bị lỗi. Hãy chọn bài khác để tiếp tục.',
       invalid_url: 'Hãy dán link video YouTube hợp lệ', source: 'Nguồn tìm kiếm', yt_src: 'YouTube',
-      volume_slider: 'Âm lượng TV', res_play: 'Chất lượng video trên TV', search_by: 'Tìm theo', m_song: 'Tên bài', m_channel: 'Kênh', m_lyrics: 'Lời bài hát', genre: 'Thể loại', open_channel: 'Mở kênh (xem bài của kênh)', yt_channel: 'Trang YouTube của kênh', filter_label: 'Đang lọc', filter_clear: 'bấm để bỏ lọc', tv: 'TV', backend: 'Trình phát', res: 'Độ phân giải tối đa', queue_full: 'Danh sách đã đầy',
+      volume_slider: 'Âm lượng TV', res_play: 'Chất lượng video trên TV', l_play: 'Phát', l_pause: 'Tạm dừng', l_next: 'Qua bài', l_replay: 'Hát lại', l_mic: 'Mic', l_vdown: 'Nhỏ tiếng', l_vup: 'To tiếng', l_react: 'Cổ vũ', l_link: 'Dán link', text_size: 'Cỡ chữ', ui_mode: 'Kiểu giao diện', ui_new: 'Mới (nút to, có chữ)', ui_old: 'Cũ (gọn)', theme: 'Chế độ hiển thị', th_auto: 'Tự động', th_light: 'Sáng', th_dark: 'Tối', fs_m: 'Vừa', fs_l: 'Lớn', fs_xl: 'Rất lớn', hc_mode: 'Chữ đậm, tương phản cao', search_by: 'Tìm theo', m_song: 'Tên bài', m_channel: 'Kênh', m_lyrics: 'Lời bài hát', genre: 'Thể loại', open_channel: 'Mở kênh (xem bài của kênh)', yt_channel: 'Trang YouTube của kênh', filter_label: 'Đang lọc', filter_clear: 'bấm để bỏ lọc', tv: 'TV', backend: 'Trình phát', res: 'Độ phân giải tối đa', queue_full: 'Danh sách đã đầy',
       donate_text: 'Thấy app vui thì mời mình ly cà phê nhé ☕ Cảm ơn bạn nhiều lắm! 💙',
       listening: 'Đang nghe…', search_failed: 'Tìm kiếm lỗi. Thử lại nhé.',
       link_found: 'Đã nhận link YouTube', add_end: 'Thêm vào danh sách', add_next: 'Phát tiếp theo', link_loading: 'Đang đọc link…',
@@ -109,7 +109,8 @@
   };
   function setIcon(id, name) {
     var b = $(id);
-    if (b.dataset.ic !== name) { b.dataset.ic = name; b.innerHTML = IC[name]; }
+    var tg = b.querySelector('.ic') || b;
+    if (b.dataset.ic !== name) { b.dataset.ic = name; tg.innerHTML = IC[name]; }
   }
 
   // ------------------------------------------------------------ helpers
@@ -200,6 +201,10 @@
   }
 
   var seeking = false, seekTimer = null;
+  function setPlayLbl() {
+    var l = $('b-play').querySelector('.lbl');
+    if (l) l.textContent = t($('b-play').dataset.ic === 'pause' ? 'l_pause' : 'l_play');
+  }
   function applyState(s) {
     var first = (S === null);
     S = s;
@@ -226,6 +231,7 @@
 
     // transport
     setIcon('b-play', (s.state === 'PLAYING' || s.state === 'RESOLVING') ? 'pause' : 'play');
+    setPlayLbl();
 
     // mini now playing
     var np = s.nowPlaying;
@@ -570,6 +576,43 @@
   var searchMode = pref('smode') || 'song';          // song | channel | lyrics
   var genre = pref('genre') || '';                   // tu khoa the loai ('' = tat ca)
   var recentOpen = pref('recentOpen') === '1';
+  var fsVal = Number(pref('fs')) || 1.2;
+  var hcOn = pref('hc') === '1';
+  var themeVal = pref('theme') || 'auto';
+  var uiVal = pref('ui') || 'new';
+  var FS = [{ v: 1, l: 'fs_m' }, { v: 1.2, l: 'fs_l' }, { v: 1.4, l: 'fs_xl' }];
+  function applyView() {
+    var r = document.documentElement;
+    r.style.setProperty('--fs', String(fsVal));
+    if (hcOn) r.setAttribute('data-hc', '1'); else r.removeAttribute('data-hc');
+    if (uiVal === 'classic') r.setAttribute('data-ui', 'classic'); else r.removeAttribute('data-ui');
+    if (themeVal === 'light' || themeVal === 'dark') r.setAttribute('data-theme', themeVal); else r.removeAttribute('data-theme');
+  }
+  function renderFsChips() {
+    var box = $('d-fs'); box.textContent = '';
+    FS.forEach(function (f) {
+      var b = el('button', fsVal === f.v ? 'on' : null, t(f.l));
+      b.addEventListener('click', function () { fsVal = f.v; pref('fs', String(f.v)); applyView(); renderFsChips(); });
+      box.appendChild(b);
+    });
+  }
+  function renderUiChips() {
+    var box = $('d-ui'); box.textContent = '';
+    [['new', 'ui_new'], ['classic', 'ui_old']].forEach(function (x) {
+      var b = el('button', uiVal === x[0] ? 'on' : null, t(x[1]));
+      b.addEventListener('click', function () { uiVal = x[0]; pref('ui', x[0]); applyView(); renderUiChips(); });
+      box.appendChild(b);
+    });
+  }
+  function renderThemeChips() {
+    var box = $('d-theme'); box.textContent = '';
+    [['auto', 'th_auto'], ['light', 'th_light'], ['dark', 'th_dark']].forEach(function (x) {
+      var b = el('button', themeVal === x[0] ? 'on' : null, t(x[1]));
+      b.addEventListener('click', function () { themeVal = x[0]; pref('theme', x[0]); applyView(); renderThemeChips(); });
+      box.appendChild(b);
+    });
+  }
+  function setLbl(id, key) { var b = $(id), l = b.querySelector('.lbl'); if (l) l.textContent = t(key); }
   var GENRES = [
     { k: '', vi: 'Tất cả', en: 'All' }, { k: 'remix', vi: 'Remix', en: 'Remix' }, { k: 'bolero', vi: 'Bolero', en: 'Bolero' },
     { k: 'ballad', vi: 'Ballad', en: 'Ballad' }, { k: 'nhạc trẻ', vi: 'Nhạc trẻ', en: 'V-pop' }, { k: 'trữ tình', vi: 'Trữ tình', en: 'Lyrical' },
@@ -925,6 +968,12 @@
     $('y-title').textContent = t('source') + ': ' + t('yt_src');
     $('y-karaoke-l').textContent = t('karaoke_mode');
     $('y-mode-l').textContent = t('search_by');
+    setLbl('b-next', 'l_next'); setLbl('b-replay', 'l_replay'); setLbl('b-mic', 'l_mic'); setLbl('b-vdown', 'l_vdown');
+    setLbl('b-vup', 'l_vup'); setLbl('b-react', 'l_react'); setLbl('b-add', 'l_link');
+    setPlayLbl();
+    $('d-theme-l').textContent = t('theme'); renderThemeChips();
+    $('d-ui-l').textContent = t('ui_mode'); renderUiChips();
+    $('d-fs-l').textContent = t('text_size'); $('d-hc-l').textContent = t('hc_mode'); renderFsChips();
     $('y-genre-l').textContent = t('genre');
     renderFilterChips(); updateFilterUi();
     $('y-close').textContent = t('close');
@@ -995,6 +1044,16 @@
     $('d-vol').addEventListener('change', function () {
       api('POST', '/api/player/volume', { level: Number($('d-vol').value) }).then(function (r) { if (r.state) applyState(r.state); });
     });
+    $('d-hc').checked = hcOn;
+    $('d-hc').addEventListener('change', function () { hcOn = $('d-hc').checked; pref('hc', hcOn ? '1' : '0'); applyView(); });
+    applyView();
+    // an thanh dieu khien khi dang go chu de ban phim khong che danh sach
+    $('q').addEventListener('focus', function () { document.body.classList.add('typing'); });
+    $('q').addEventListener('blur', function () { document.body.classList.remove('typing'); });
+    // rung nhe khi bam nut (dien thoai Android) de biet la da bam
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('button') && navigator.vibrate) { try { navigator.vibrate(18); } catch (x) {} }
+    }, true);
     $('recent-toggle').addEventListener('click', function () { recentOpen = !recentOpen; pref('recentOpen', recentOpen ? '1' : '0'); renderRecent(); });
     $('filter-line').addEventListener('click', clearFilters);
     var rg = $('mini-range');
